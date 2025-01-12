@@ -1,20 +1,31 @@
 package com.example.outdoorsy
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import android.widget.Button
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
+import com.example.outdoorsy.viewmodel.RegisterViewModel
 
 class RegisterActivity : AppCompatActivity() {
+    private lateinit var viewModel: RegisterViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_register)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        viewModel = ViewModelProvider(this)[RegisterViewModel::class.java]
+
+        val emailInput = findViewById<EditText>(R.id.registerEmail)
+        val passwordInput = findViewById<EditText>(R.id.registerPassword)
+        val confirmPasswordInput = findViewById<EditText>(R.id.verifyRegisterPassword)
+        val signUpButton = findViewById<Button>(R.id.SignUpButton)
+
+        signUpButton.setOnClickListener {
+            viewModel.registerUser(
+                emailInput.text.toString(),
+                passwordInput.text.toString(),
+                confirmPasswordInput.text.toString()
+            )
         }
     }
 }
