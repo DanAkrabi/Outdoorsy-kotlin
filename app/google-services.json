@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "243638374718",
+    "project_id": "outdoorsy-f045a",
+    "storage_bucket": "outdoorsy-f045a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:243638374718:android:765027702ec53cb9981c6f",
+        "android_client_info": {
+          "package_name": "com.example.outdoorsy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkyF712J98e_Me8YJMhIHJ4P4jyYhVl7c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

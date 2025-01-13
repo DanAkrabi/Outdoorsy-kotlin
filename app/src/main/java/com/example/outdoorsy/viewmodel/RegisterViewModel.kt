@@ -1,27 +1,57 @@
 package com.example.outdoorsy.viewmodel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import androidx.lifecycle.viewModelScope
+import com.example.outdoorsy.model.UserModel
+import kotlinx.coroutines.launch
+import com.example.outdoorsy.model.FirebaseModel
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 class RegisterViewModel : ViewModel() {
-    private val _registrationState = MutableStateFlow<RegistrationState>(RegistrationState.Empty)
-    val registrationState = _registrationState.asStateFlow()
 
-    fun registerUser(email: String, password: String, confirmPassword: String) {
-        // Validate inputs
+    private val firestore= Firebase.firestore
+    private val firebaseModel = FirebaseModel(firestore)
+
+    private val _registrationState = MutableLiveData<RegistrationState>(RegistrationState.Empty)
+    val registrationState: LiveData<RegistrationState> get() = _registrationState
+
+    fun registerUser(email: String, password: String, confirmPassword: String, fullname: String) {
+        if (email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || fullname.isEmpty()) {
+            _registrationState.value = RegistrationState.Error("All fields are required")
+            return
+        }
+
         if (password != confirmPassword) {
             _registrationState.value = RegistrationState.Error("Passwords do not match")
             return
         }
-        // Assume a function to handle registration
-        // Result could be observed and state updated accordingly
-        _registrationState.value = RegistrationState.Success
-    }
-}
 
-sealed class RegistrationState {
-    object Empty : RegistrationState()
-    object Success : RegistrationState()
-    data class Error(val message: String) : RegistrationState()
+        viewModelScope.launch {
+            val user = UserModel(
+                id = generateUserId(),
+                email = email,
+                password = password,
+                fullname = fullname
+            )
+            val isSaved = firebaseModel.saveUser(user) // Use the instance
+            if (isSaved) {
+                _registrationState.value = RegistrationState.Success
+            } else {
+                _registrationState.value = RegistrationState.Error("Failed to register user.")
+            }
+        }
+    }
+
+    private fun generateUserId(): String {
+        return java.util.UUID.randomUUID().toString()
+    }
+
+    sealed class RegistrationState {
+        object Empty : RegistrationState()
+        object Success : RegistrationState()
+        data class Error(val message: String) : RegistrationState()
+    }
 }

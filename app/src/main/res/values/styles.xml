@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Toolbar Style -->
+    <style name="Widget.Outdoorsy.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="titleTextColor">@color/white</item>
+        <item name="subtitleTextColor">@color/white</item>
+    </style>
+
+</resources>
