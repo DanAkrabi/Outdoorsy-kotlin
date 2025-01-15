@@ -6,6 +6,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.example.outdoorsy.R
+import com.google.firebase.FirebaseApp
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -13,7 +14,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-
+        FirebaseApp.initializeApp(this)
         // Optional: Enable back button or navigation drawer
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
@@ -44,7 +45,7 @@ class MainActivity : AppCompatActivity() {
 //import android.widget.EditText
 //import android.widget.Toast
 //import androidx.appcompat.app.AppCompatActivity
-//import com.example.outdoorsy.model.UserModel
+//import com.example.outdoorsy.model.dao.UserModel
 //import com.example.outdoorsy.repository.UserRepository
 //import com.example.outdoorsy.ui.HomepageActivity
 //import com.google.firebase.firestore.ktx.firestore

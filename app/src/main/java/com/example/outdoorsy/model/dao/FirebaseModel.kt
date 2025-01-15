@@ -1,13 +1,13 @@
-package com.example.outdoorsy.model
+
+
+
+package com.example.outdoorsy.model.dao
 
 import android.util.Log
-import com.google.firebase.firestore.FirebaseFirestoreSettings
-import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.firestoreSettings
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.memoryCacheSettings
 import com.google.firebase.ktx.Firebase
-import com.example.outdoorsy.model.UserModel
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 //FirebaseModel class - similar to Routing
@@ -15,6 +15,12 @@ import kotlinx.coroutines.tasks.await
 class FirebaseModel(private val firestore: FirebaseFirestore) {
     private val database= Firebase.firestore//initializing a firebase instance
     private val usersCollection = firestore.collection("users")
+
+    init{
+        val settings= firestoreSettings {
+            setLocalCacheSettings(memoryCacheSettings {  })
+        }
+    }
 
      suspend fun saveUser(user: UserModel): Boolean {
         return try {
@@ -34,10 +40,10 @@ class FirebaseModel(private val firestore: FirebaseFirestore) {
     }
 
     // Get user from Firestore
-    suspend fun getUser(userId: String): UserModel? {
-        val documentSnapshot = usersCollection.document(userId).get().await()
-        return documentSnapshot.toObject(UserModel::class.java)
-    }
+//    suspend fun getUser(userId: String): UserModel? {
+//        val documentSnapshot = usersCollection.document(userId).get().await()
+//        return documentSnapshot.toObject(UserModel::class.java)
+//    }
 
     // Update user in Firestore
     suspend fun updateUser(userId: String, updatedData: Map<String, Any>) {
@@ -49,6 +55,14 @@ class FirebaseModel(private val firestore: FirebaseFirestore) {
         usersCollection.document(userId).delete().await()
     }
 
-
+    suspend fun getUser(userId: String): UserModel? {
+        return try {
+            val documentSnapshot = usersCollection.document(userId).get().await()
+            documentSnapshot.toObject(UserModel::class.java)
+        } catch (e: Exception) {
+            null // Handle errors as needed
+        }
+    }
 
 }
+

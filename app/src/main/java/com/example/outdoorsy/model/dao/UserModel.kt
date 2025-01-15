@@ -1,4 +1,4 @@
-package com.example.outdoorsy.model
+package com.example.outdoorsy.model.dao
 
 data class UserModel(
     val id: String = "",

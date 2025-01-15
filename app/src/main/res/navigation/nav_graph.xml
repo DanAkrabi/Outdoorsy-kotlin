@@ -14,8 +14,16 @@
             android:id="@+id/action_loginFragment_to_registerFragment"
             app:destination="@id/registerFragment"
             app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_loginFragment_to_homepageFragment"
+            app:popUpTo="@id/nav_graph"
+            app:destination="@id/homepageFragment"
+            app:popUpToInclusive="true" />
     </fragment>
-
+    <fragment
+        android:id="@+id/homepageFragment"
+        android:name="com.example.outdoorsy.fragments.HomepageFragment"
+        android:label="Homepage" />
     <!-- Register Fragment -->
     <fragment
         android:id="@+id/registerFragment"
