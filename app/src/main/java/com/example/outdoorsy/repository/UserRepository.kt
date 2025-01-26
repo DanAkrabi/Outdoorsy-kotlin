@@ -1,5 +1,6 @@
 package com.example.outdoorsy.repository
 
+import android.graphics.Bitmap
 import com.example.outdoorsy.model.dao.FirebaseModel
 import com.example.outdoorsy.model.dao.UserModel
 
@@ -14,6 +15,8 @@ class UserRepository(private val firebaseModel: FirebaseModel) {
     suspend fun fetchUser(userId: String): UserModel? {
         return firebaseModel.getUser(userId)
     }
+
+
 }
 
 //

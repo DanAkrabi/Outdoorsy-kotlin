@@ -1,18 +1,30 @@
 package com.example.outdoorsy.ui
 
-
-
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.RecyclerView
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.example.outdoorsy.R
+import com.example.outdoorsy.model.dao.UserModel
+import com.example.outdoorsy.viewmodel.UserViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class HomepageActivity : AppCompatActivity() {
+    val userViewModel: UserViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.homepage_activity)
 
-        val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewDestinations)
-        // Setup RecyclerView with an adapter to display content
+
+        // Get NavHostFragment instance
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container) as NavHostFragment
+        val navController = navHostFragment.navController
+
+        // Set up BottomNavigationView with NavController
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavigationView.setupWithNavController(navController)
+
+
     }
 }

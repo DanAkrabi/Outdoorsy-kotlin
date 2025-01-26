@@ -86,5 +86,9 @@ dependencies {
     implementation (libs.androidx.navigation.fragment.ktx.v260)
     implementation (libs.androidx.navigation.ui.ktx)
     implementation(libs.firebase.auth)
+    implementation(libs.firebase.storage)
+    implementation (libs.glide)
+    kapt ("com.github.bumptech.glide:compiler:4.16.0")
 
+    implementation (libs.material.v140)
 }

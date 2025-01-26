@@ -1,10 +1,12 @@
 package com.example.outdoorsy.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.outdoorsy.model.Destination
+import com.example.outdoorsy.model.dao.PostModel
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
@@ -32,6 +34,24 @@ class HomepageViewModel : ViewModel() {
             }
         }
     }
+    fun fetchPosts(): LiveData<List<PostModel>> {
+        val postsLiveData = MutableLiveData<List<PostModel>>()
+
+        viewModelScope.launch {
+            try {
+                val posts = Firebase.firestore.collection("posts")
+                    .get()
+                    .await()
+                    .toObjects(PostModel::class.java)
+                postsLiveData.value = posts
+            } catch (e: Exception) {
+                Log.e("HomepageViewModel", "Error fetching posts: ${e.message}")
+            }
+        }
+
+        return postsLiveData
+    }
+
 }
 
 //package com.example.outdoorsy.viewmodel

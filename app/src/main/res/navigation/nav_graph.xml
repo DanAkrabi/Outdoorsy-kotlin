@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/loginFragment">
 
@@ -14,16 +14,14 @@
             android:id="@+id/action_loginFragment_to_registerFragment"
             app:destination="@id/registerFragment"
             app:popUpToInclusive="false" />
+        <!-- Navigate to HomepageActivity -->
         <action
-            android:id="@+id/action_loginFragment_to_homepageFragment"
+            android:id="@+id/action_loginFragment_to_homepageActivity"
+            app:destination="@id/homepageActivity"
             app:popUpTo="@id/nav_graph"
-            app:destination="@id/homepageFragment"
             app:popUpToInclusive="true" />
     </fragment>
-    <fragment
-        android:id="@+id/homepageFragment"
-        android:name="com.example.outdoorsy.fragments.HomepageFragment"
-        android:label="Homepage" />
+
     <!-- Register Fragment -->
     <fragment
         android:id="@+id/registerFragment"
@@ -35,5 +33,12 @@
             app:destination="@id/loginFragment"
             app:popUpToInclusive="false" />
     </fragment>
+
+    <!-- Homepage Activity -->
+    <activity
+        android:id="@+id/homepageActivity"
+        android:name="com.example.outdoorsy.ui.HomepageActivity"
+        android:label="Homepage"
+      tools:layout="layout/homepage_activity"  />
 
 </navigation>
