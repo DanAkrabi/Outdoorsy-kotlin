@@ -50,8 +50,15 @@ class ProfileFragment : Fragment() {
         binding.recyclerViewPosts.adapter = postsAdapter
 
         val dummyPosts = listOf(
-            PostModel("1", "userId", "Post 1", "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.picmonkey.com%2Fblog%2Fcreate-the-best-profile-pic&psig=AOvVaw1GurhCmPmuaVlqtBKfbWDP&ust=1738063853397000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCODB78bmlYsDFQAAAAAdAAAAABAE", Date(), null, 0, 0),
-            PostModel("2", "userId", "Post 2", "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.picmonkey.com%2Fblog%2Fcreate-the-best-profile-pic&psig=AOvVaw1GurhCmPmuaVlqtBKfbWDP&ust=1738063853397000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCODB78bmlYsDFQAAAAAdAAAAABAE", Date(), null, 0, 0)
+            PostModel("1", "userId", "Post 1", "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", Date(), null, 0, 0),
+            PostModel("2", "userId", "Post 2", "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", Date(), null, 0, 0),
+            PostModel("3", "userId", "Post 3", "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", Date(), null, 0, 0),
+            PostModel("4", "userId", "Post 4", "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", Date(), null, 0, 0),
+            PostModel("5", "userId", "Post 5", "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", Date(), null, 0, 0),
+            PostModel("6", "userId", "Post 6", "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", Date(), null, 0, 0),
+            PostModel("7", "userId", "Post 7", "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", Date(), null, 0, 0)
+
+
         )
         postsAdapter.submitList(dummyPosts)
 

@@ -17,8 +17,7 @@ class PostsAdapter(
 ) : RecyclerView.Adapter<PostsAdapter.PostViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-//        val view = LayoutInflater.from(context).inflate(R.layout.item_post, parent, false)
-//        return PostViewHolder(view)
+
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_post, parent, false)
         return PostViewHolder(view)
     }
@@ -26,23 +25,18 @@ class PostsAdapter(
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = posts[position]
 
-        // טוען את תמונת הפוסט
+
         Glide.with(context)
             .load(post.imageUrl)
             .placeholder(R.drawable.ic_placeholder_image)
             .into(holder.postImage)
 
-        // מאזין ללחיצה על התמונה
+
         holder.itemView.setOnClickListener {
-            onPostClicked(post) // מעביר את הפוסט למסך הבא
+            onPostClicked(post)
         }
     }
-//    override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
-//        val post = posts[position]
-//        holder.bind(post)
-//
-//
-//    }
+
 
     override fun getItemCount(): Int = posts.size
 

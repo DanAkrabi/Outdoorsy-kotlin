@@ -15,21 +15,19 @@
             app:destination="@id/postDetailsFragment" />
     </fragment>
     <!-- Profile Fragment -->
-    <fragment
-        android:id="@+id/navigation_profile"
-        android:name="com.example.outdoorsy.fragments.ProfileFragment"
-        android:label="Profile" />
+<!--    <fragment-->
+<!--        android:id="@+id/navigation_profile"-->
+<!--        android:name="com.example.outdoorsy.fragments.ProfileFragment"-->
+<!--        android:label="Profile" />-->
 
     <fragment
         android:id="@+id/navigation_camera"
         android:name="com.example.outdoorsy.fragments.CameraFragment"
         android:label="Camera" />
-
     <fragment
-        android:id="@+id/profileFragment"
+        android:id="@+id/navigation_profile"
         android:name="com.example.outdoorsy.fragments.ProfileFragment"
-        android:label="ProfileFragment"
-        tools:layout="@layout/fragment_profile">
+        android:label="Profile">
         <action
             android:id="@+id/action_profileFragment_to_postDetailsFragment"
             app:destination="@id/postDetailsFragment" />
@@ -43,5 +41,24 @@
             android:name="post"
             app:argType="com.example.outdoorsy.model.dao.PostModel" />
     </fragment>
+
+<!--    <fragment-->
+<!--        android:id="@+id/profileFragment"-->
+<!--        android:name="com.example.outdoorsy.fragments.ProfileFragment"-->
+<!--        android:label="ProfileFragment"-->
+<!--        tools:layout="@layout/fragment_profile">-->
+<!--        <action-->
+<!--            android:id="@+id/action_profileFragment_to_postDetailsFragment"-->
+<!--            app:destination="@id/postDetailsFragment" />-->
+<!--    </fragment>-->
+
+<!--    <fragment-->
+<!--        android:id="@+id/postDetailsFragment"-->
+<!--        android:name="com.example.outdoorsy.fragments.PostDetailsFragment"-->
+<!--        android:label="Post Details">-->
+<!--        <argument-->
+<!--            android:name="post"-->
+<!--            app:argType="com.example.outdoorsy.model.dao.PostModel" />-->
+<!--    </fragment>-->
 
 </navigation>
