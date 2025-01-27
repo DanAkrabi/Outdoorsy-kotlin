@@ -1,3 +1,5 @@
+package com.example.outdoorsy.adapters
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -6,7 +8,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.outdoorsy.R
-import com.example.outdoorsy.model.Destination
 
 class DestinationsAdapter :
     ListAdapter<Destination, DestinationsAdapter.ViewHolder>(DestinationDiffCallback()) {
@@ -48,7 +49,7 @@ class DestinationsAdapter :
 //import android.widget.TextView
 //import androidx.recyclerview.widget.RecyclerView
 //import com.example.outdoorsy.R
-//import com.example.outdoorsy.model.Destination
+//import com.example.outdoorsy.adapters.Destination
 //
 //class DestinationsAdapter(private var data: List<Destination>) :
 //    RecyclerView.Adapter<DestinationsAdapter.ViewHolder>() {

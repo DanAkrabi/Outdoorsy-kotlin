@@ -73,10 +73,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         }
 
     }private fun navigateToHomePage() {
-//        val intent = Intent(requireContext(), HomepageActivity::class.java)
-//        startActivity(intent)
-//        requireActivity().finish()
-        findNavController().navigate(R.id.action_loginFragment_to_homepageActivity)
+        val intent = Intent(requireContext(), HomepageActivity::class.java)
+        startActivity(intent)
+        requireActivity().finish()
+//        findNavController().navigate(R.id.action_loginFragment_to_homepageActivity)
     }
 
 

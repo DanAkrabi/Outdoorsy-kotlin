@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.outdoorsy.R
@@ -17,6 +18,7 @@ import com.example.outdoorsy.viewmodel.UserViewModel
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.util.Date
 
 class ProfileFragment : Fragment() {
     private val userViewModel: UserViewModel by activityViewModels()
@@ -37,10 +39,21 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Initialize RecyclerView
-        postsAdapter = PostsAdapter(requireContext(), emptyList())
+//        postsAdapter = PostsAdapter(requireContext(), emptyList())
+//        binding.recyclerViewPosts.layoutManager = GridLayoutManager(requireContext(), 3)
+//        binding.recyclerViewPosts.adapter = postsAdapter
+        postsAdapter = PostsAdapter(requireContext(), emptyList()) { post ->
+
+            navigateToPostDetails(post)
+        }
         binding.recyclerViewPosts.layoutManager = GridLayoutManager(requireContext(), 3)
         binding.recyclerViewPosts.adapter = postsAdapter
 
+        val dummyPosts = listOf(
+            PostModel("1", "userId", "Post 1", "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.picmonkey.com%2Fblog%2Fcreate-the-best-profile-pic&psig=AOvVaw1GurhCmPmuaVlqtBKfbWDP&ust=1738063853397000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCODB78bmlYsDFQAAAAAdAAAAABAE", Date(), null, 0, 0),
+            PostModel("2", "userId", "Post 2", "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.picmonkey.com%2Fblog%2Fcreate-the-best-profile-pic&psig=AOvVaw1GurhCmPmuaVlqtBKfbWDP&ust=1738063853397000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCODB78bmlYsDFQAAAAAdAAAAABAE", Date(), null, 0, 0)
+        )
+        postsAdapter.submitList(dummyPosts)
 
         // Observe the logged-in user
         userViewModel.user.observe(viewLifecycleOwner) { user ->
@@ -84,6 +97,12 @@ class ProfileFragment : Fragment() {
                 Log.e("Firestore", "Error fetching posts: ${exception.message}")
             }
     }
+    private fun navigateToPostDetails(post: PostModel) {
+        // Use Safe Args to create the action
+        val action = ProfileFragmentDirections.actionProfileFragmentToPostDetailsFragment(post)
+        findNavController().navigate(action)
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

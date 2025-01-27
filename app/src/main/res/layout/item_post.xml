@@ -1,63 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="8dp">
+    android:layout_margin="4dp">
 
-    <!-- Profile Picture -->
-    <ImageView
-        android:id="@+id/imageProfile"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/ic_profile_placeholder"
-        android:scaleType="centerCrop" />
 
-    <!-- Username -->
-    <TextView
-        android:id="@+id/textUsername"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="username"
-        android:textSize="16sp"
-        android:textStyle="bold" />
-
-    <!-- Post Image -->
     <ImageView
         android:id="@+id/imagePost"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:scaleType="centerCrop" />
+        android:layout_height="120dp"
+        android:scaleType="centerCrop"
+       />
+</FrameLayout>
 
-    <!-- Caption -->
-    <TextView
-        android:id="@+id/textCaption"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Post Caption"
-        android:paddingTop="4dp" />
+<!--<LinearLayout-->
+<!--    xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="wrap_content"-->
+<!--    android:orientation="vertical"-->
+<!--    android:padding="8dp">-->
 
-    <!-- Likes and Comments -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+<!--    &lt;!&ndash; Profile Picture &ndash;&gt;-->
+<!--    <ImageView-->
+<!--        android:id="@+id/imageProfile"-->
+<!--        android:layout_width="40dp"-->
+<!--        android:layout_height="40dp"-->
+<!--        android:src="@drawable/ic_profile_placeholder"-->
+<!--        android:scaleType="centerCrop" />-->
 
-        <TextView
-            android:id="@+id/likesCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0 Likes" />
+<!--    &lt;!&ndash; Username &ndash;&gt;-->
+<!--    <TextView-->
+<!--        android:id="@+id/textUsername"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="username"-->
+<!--        android:textSize="16sp"-->
+<!--        android:textStyle="bold" />-->
 
-        <TextView
-            android:id="@+id/commentsCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0 Comments"
-            android:layout_marginStart="16dp" />
-    </LinearLayout>
-</LinearLayout>
+<!--    &lt;!&ndash; Post Image &ndash;&gt;-->
+<!--    <ImageView-->
+<!--        android:id="@+id/imagePost"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="200dp"-->
+<!--        android:scaleType="centerCrop" />-->
+
+<!--    &lt;!&ndash; Caption &ndash;&gt;-->
+<!--    <TextView-->
+<!--        android:id="@+id/textCaption"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Post Caption"-->
+<!--        android:paddingTop="4dp" />-->
+
+<!--    &lt;!&ndash; Likes and Comments &ndash;&gt;-->
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="horizontal">-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/likesCount"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="0 Likes" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/commentsCount"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="0 Comments"-->
+<!--            android:layout_marginStart="16dp" />-->
+<!--    </LinearLayout>-->
+<!--</LinearLayout>-->
 
     <!--<androidx.constraintlayout.widget.ConstraintLayout-->
 <!--    xmlns:android="http://schemas.android.com/apk/res/android"-->

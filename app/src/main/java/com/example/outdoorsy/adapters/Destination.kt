@@ -1,4 +1,4 @@
-package com.example.outdoorsy.model
+package com.example.outdoorsy.adapters
 
 data class Destination(
     val id: String ,

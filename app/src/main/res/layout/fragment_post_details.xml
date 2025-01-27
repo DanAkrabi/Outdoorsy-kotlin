@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Image -->
+        <ImageView
+            android:id="@+id/imagePost"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:contentDescription="TODO"
+            android:scaleType="centerCrop" />
+
+        <!-- Caption -->
+        <TextView
+            android:id="@+id/textCaption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:text="Caption"
+            android:textSize="16sp" />
+
+        <!-- Likes -->
+        <TextView
+            android:id="@+id/likesCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="100 Likes"
+            android:layout_marginTop="8dp" />
+
+        <!-- Comments -->
+        <TextView
+            android:id="@+id/commentsCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="20 Comments"
+            android:layout_marginTop="4dp" />
+
+    </LinearLayout>
+</ScrollView>
+</layout>
+
+    <!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<ScrollView-->
+<!--    xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent"-->
+<!--    android:padding="16dp">-->
+
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="vertical">-->
+
+<!--        &lt;!&ndash; תמונת הפוסט &ndash;&gt;-->
+<!--        <ImageView-->
+<!--            android:id="@+id/imagePost"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="300dp"-->
+<!--            android:scaleType="centerCrop" />-->
+
+<!--        &lt;!&ndash; כיתוב הפוסט &ndash;&gt;-->
+<!--        <TextView-->
+<!--            android:id="@+id/textCaption"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Caption"-->
+<!--            android:paddingTop="8dp"-->
+<!--            android:textSize="16sp" />-->
+
+<!--        &lt;!&ndash; לייקים &ndash;&gt;-->
+<!--        <TextView-->
+<!--            android:id="@+id/likesCount"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="100 Likes"-->
+<!--            android:layout_marginTop="8dp" />-->
+
+<!--        &lt;!&ndash; תגובות &ndash;&gt;-->
+<!--        <TextView-->
+<!--            android:id="@+id/commentsCount"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="20 Comments"-->
+<!--            android:layout_marginTop="4dp" />-->
+
+<!--    </LinearLayout>-->
+<!--</ScrollView>-->

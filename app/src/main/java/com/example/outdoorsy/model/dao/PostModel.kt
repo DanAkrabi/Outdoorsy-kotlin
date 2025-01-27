@@ -1,7 +1,9 @@
 package com.example.outdoorsy.model.dao
 
 import java.util.Date
-
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+@Parcelize
 data class PostModel(
     val postId: String,
     val userId: String,
@@ -11,4 +13,4 @@ data class PostModel(
     val location: String? = null,
     val likesCount: Int = 0,
     val commentsCount: Int = 0
-)
+):Parcelable

@@ -1,6 +1,6 @@
 package com.example.outdoorsy.fragments
+import com.example.outdoorsy.adapters.DestinationsAdapter
 
-import DestinationsAdapter
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,6 +14,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.outdoorsy.R
 import com.example.outdoorsy.adapters.PostsAdapter
 import com.example.outdoorsy.databinding.FragmentHomepageBinding
+import com.example.outdoorsy.model.dao.PostModel
 import com.example.outdoorsy.viewmodel.HomepageViewModel
 import com.example.outdoorsy.viewmodel.UserViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -41,7 +42,10 @@ class HomepageFragment : Fragment(R.layout.fragment_homepage) {
         auth = FirebaseAuth.getInstance()
 //        setupBottomNavigationView()
 
-        postsAdapter=PostsAdapter(requireContext(), emptyList())
+        postsAdapter = PostsAdapter(requireContext(), emptyList()) { post ->
+            // טיפול בלחיצה על פוסט
+            navigateToPostDetails(post)
+        }
         binding.recyclerViewDestinations.adapter = postsAdapter
 
         viewModel.fetchPosts().observe(viewLifecycleOwner) { posts ->
@@ -70,6 +74,10 @@ class HomepageFragment : Fragment(R.layout.fragment_homepage) {
 
     }
 
+    private fun navigateToPostDetails(post: PostModel) {
+        val action = HomepageFragmentDirections.actionHomepageFragmentToPostDetailsFragment(post)
+        findNavController().navigate(action)
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.outdoorsy.model.Destination
+import com.example.outdoorsy.adapters.Destination
 import com.example.outdoorsy.model.dao.PostModel
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -26,7 +26,8 @@ class HomepageViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val querySnapshot = Firebase.firestore.collection("destinations").get().await()
-                val fetchedDestinations = querySnapshot.documents.mapNotNull { it.toObject(Destination::class.java) }
+                val fetchedDestinations = querySnapshot.documents.mapNotNull { it.toObject(
+                    Destination::class.java) }
                 _destinations.postValue(fetchedDestinations)
                 _error.postValue(null) // Clear any previous errors
             } catch (e: Exception) {
@@ -59,7 +60,7 @@ class HomepageViewModel : ViewModel() {
 //import androidx.lifecycle.LiveData
 //import androidx.lifecycle.MutableLiveData
 //import androidx.lifecycle.ViewModel
-//import com.example.outdoorsy.model.Destination
+//import com.example.outdoorsy.adapters.Destination
 //import com.google.firebase.firestore.ktx.firestore
 //import com.google.firebase.ktx.Firebase
 //import kotlinx.coroutines.tasks.await

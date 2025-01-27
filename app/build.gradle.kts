@@ -4,7 +4,10 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.services)
     id ("kotlin-kapt")
+    id("androidx.navigation.safeargs.kotlin") // Safe Args
+    id("kotlin-parcelize") // Parcelize
 
+//    id ("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -42,6 +45,7 @@ android {
         dataBinding = true
 
     }
+
 }
 
 dependencies {
@@ -69,6 +73,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.fragment.ktx)
+    implementation(libs.firebase.inappmessaging)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -88,7 +93,13 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.storage)
     implementation (libs.glide)
-    kapt ("com.github.bumptech.glide:compiler:4.16.0")
+//    kapt ("com.github.bumptech.glide:compiler:4.16.0")
+    implementation (libs.github.glide.v4120)
+    annotationProcessor (libs.glide.compiler)
 
     implementation (libs.material.v140)
+
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+
 }
