@@ -8,26 +8,44 @@
         android:layout_height="match_parent"
         tools:context=".fragments.HomepageFragment">
 
+<!--        <androidx.appcompat.widget.SearchView-->
+<!--            android:id="@+id/SearchBar"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="8dp"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            android:background="@drawable/search_view_bg"-->
+<!--            app:queryHint="Search Here..."-->
+<!--            app:iconifiedByDefault="false"/>-->
+
+<!--        <FrameLayout-->
+<!--            android:id="@+id/searchResultsContainer"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:visibility="gone"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/SearchBar"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"/>-->
+
+
+
+        <!-- RecyclerView for Search Results -->
+<!--        <androidx.recyclerview.widget.RecyclerView-->
+<!--            android:id="@+id/recyclerViewSearchResults"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:visibility="gone"-->
+<!--            tools:listitem="@layout/item_user" />-->
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewDestinations"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="0dp"
             tools:listitem="@layout/item_destination" />
-
-
-
-<!--        <com.google.android.material.bottomnavigation.BottomNavigationView-->
-<!--            android:id="@+id/bottom_navigation"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-
-<!--            android:layout_gravity="bottom"-->
-<!--            android:title="Outdoorsy"-->
-<!--            app:background="@color/black"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:menu="@menu/bottom_nav_menu" />-->
 
         <TextView
             android:id="@+id/textWelcome"
@@ -45,27 +63,3 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
 
-
-    <!--<?xml version="1.0" encoding="utf-8"?>-->
-<!--<layout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
-<!--    xmlns:tools="http://schemas.android.com/tools">-->
-
-<!--    <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        tools:context=".fragments.HomepageFragment">-->
-
-<!--        &lt;!&ndash; Example RecyclerView to display data &ndash;&gt;-->
-<!--        <androidx.recyclerview.widget.RecyclerView-->
-<!--            android:id="@+id/recyclerView"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="0dp"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            tools:listitem="@layout/destination_item" />-->
-
-<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
-<!--</layout>-->

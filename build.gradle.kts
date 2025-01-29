@@ -6,6 +6,7 @@ plugins {
 }
 
 buildscript {
+
     repositories {
         google()
         mavenCentral()
@@ -13,6 +14,8 @@ buildscript {
     dependencies {
         // Add Safe Args classpath for Navigation
         classpath(libs.androidx.navigation.safe.args.gradle.plugin) // Replace with the latest version if needed
+//        var hilt_version = "2.48"
+        classpath (libs.hilt.android.gradle.plugin)
     }
 }
 //// Top-level build file where you can add configuration options common to all sub-projects/modules.

@@ -7,75 +7,49 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.outdoorsy.adapters.Destination
 import com.example.outdoorsy.model.dao.PostModel
+import com.example.outdoorsy.repository.PostRepository
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
-class HomepageViewModel : ViewModel() {
+@HiltViewModel
+class HomepageViewModel @Inject constructor(private val postRepository: PostRepository) : ViewModel() {
     // Backing property for destinations
-    private val _destinations = MutableLiveData<List<Destination>>()
-    val destinations: LiveData<List<Destination>> get() = _destinations
-
-    // Backing property for error messages
+//    private val _destinations = MutableLiveData<List<Destination>>()
+//    val destinations: LiveData<List<Destination>> get() = _destinations
+//
+//    // Backing property for error messages
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> get() = _error
 
     // Fetch destinations asynchronously
-    fun fetchDestinations() {
+    private val _posts = MutableLiveData<List<PostModel>>()
+    val posts: LiveData<List<PostModel>> get() = _posts
+
+    private val _isLoading = MutableLiveData<Boolean>(false)
+    val isLoading: LiveData<Boolean> get() = _isLoading
+    fun fetchHomepagePosts() {
         viewModelScope.launch {
+            _isLoading.value = true
             try {
-                val querySnapshot = Firebase.firestore.collection("destinations").get().await()
-                val fetchedDestinations = querySnapshot.documents.mapNotNull { it.toObject(
-                    Destination::class.java) }
-                _destinations.postValue(fetchedDestinations)
-                _error.postValue(null) // Clear any previous errors
+                val posts = postRepository.fetchHomepagePosts()
+                _posts.value = posts
             } catch (e: Exception) {
-                _error.postValue("Failed to fetch destinations: ${e.message}")
+                // Handle error
+            } finally {
+                _isLoading.value = false
             }
         }
     }
-    fun fetchPosts(): LiveData<List<PostModel>> {
-        val postsLiveData = MutableLiveData<List<PostModel>>()
-
+    fun searchPosts(query: String) {
         viewModelScope.launch {
-            try {
-                val posts = Firebase.firestore.collection("posts")
-                    .get()
-                    .await()
-                    .toObjects(PostModel::class.java)
-                postsLiveData.value = posts
-            } catch (e: Exception) {
-                Log.e("HomepageViewModel", "Error fetching posts: ${e.message}")
-            }
+            val filteredPosts = postRepository.searchPostsByQuery(query) // Implement this in your repository
+            _posts.value = filteredPosts
         }
-
-        return postsLiveData
     }
 
 }
 
-//package com.example.outdoorsy.viewmodel
-//
-//import androidx.lifecycle.LiveData
-//import androidx.lifecycle.MutableLiveData
-//import androidx.lifecycle.ViewModel
-//import com.example.outdoorsy.adapters.Destination
-//import com.google.firebase.firestore.ktx.firestore
-//import com.google.firebase.ktx.Firebase
-//import kotlinx.coroutines.tasks.await
-//
-//class HomepageViewModel : ViewModel() {
-//    private val _destinations = MutableLiveData<List<Destination>?>()
-//    val destinations: MutableLiveData<List<Destination>?> get() = _destinations
-//
-//    suspend fun fetchDestinations() {
-//        try {
-//            val querySnapshot = Firebase.firestore.collection("destinations").get().await()
-//            val fetchedDestinations = querySnapshot.documents.mapNotNull { it.toObject(Destination::class.java) }
-//            _destinations.postValue(fetchedDestinations)
-//        } catch (e: Exception) {
-//            _destinations.postValue(null) // Indicate an error
-//        }
-//    }
-//}

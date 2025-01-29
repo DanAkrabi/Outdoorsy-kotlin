@@ -1,18 +1,28 @@
 package com.example.outdoorsy.viewmodel
 
-import android.graphics.Bitmap
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.outdoorsy.model.dao.FirebaseModel
-import com.google.firebase.firestore.FirebaseFirestore
+import androidx.lifecycle.viewModelScope
+import com.example.outdoorsy.model.dao.PostModel
+import com.example.outdoorsy.repository.PostRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class PostViewModel : ViewModel() {
-    // Initialize Firestore
-    private val firestoreInstance = FirebaseFirestore.getInstance()
+@HiltViewModel
+class PostViewModel @Inject constructor(
+    private val postRepository: PostRepository
+) : ViewModel() {
 
-    // Create FirebaseModel with Firestore instance
-    private val firebaseModel = FirebaseModel(firestoreInstance)
+    private val _posts = MutableLiveData<List<PostModel>>()
+    val posts: LiveData<List<PostModel>> get() = _posts
 
-    fun uploadImageToFirebase(image: Bitmap, name: String, callback: (String?) -> Unit) {
-        firebaseModel.uploadImage(image, name, callback)
+    fun fetchUserPosts(userId: String) {
+        viewModelScope.launch {
+            val posts = postRepository.getUserPosts(userId)
+            _posts.postValue(posts)
+        }
     }
 }
+

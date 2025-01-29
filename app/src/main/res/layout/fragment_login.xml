@@ -36,7 +36,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:destination="@id/loginFragment"
-
             android:text="Log In"
             app:layout_constraintTop_toBottomOf="@+id/loginPassword"
             app:layout_constraintStart_toStartOf="parent"

@@ -6,8 +6,9 @@ plugins {
     id ("kotlin-kapt")
     id("androidx.navigation.safeargs.kotlin") // Safe Args
     id("kotlin-parcelize") // Parcelize
-
+    id ("dagger.hilt.android.plugin")
 //    id ("androidx.navigation.safeargs.kotlin")
+
 }
 
 android {
@@ -45,6 +46,8 @@ android {
         dataBinding = true
 
     }
+
+
 
 }
 
@@ -93,7 +96,7 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.storage)
     implementation (libs.glide)
-//    kapt ("com.github.bumptech.glide:compiler:4.16.0")
+    kapt ("com.github.bumptech.glide:compiler:4.16.0")
     implementation (libs.github.glide.v4120)
     annotationProcessor (libs.glide.compiler)
 
@@ -101,5 +104,10 @@ dependencies {
 
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
+//    implementation (libs.androidx.hilt.lifecycle.viewmodel)
+    kapt (libs.androidx.hilt.compiler)
 
+    // KAPT for Hilt annotation processing
 }

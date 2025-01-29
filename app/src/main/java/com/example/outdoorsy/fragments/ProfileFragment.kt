@@ -5,8 +5,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.ui.semantics.text
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
@@ -14,102 +16,74 @@ import com.example.outdoorsy.R
 import com.example.outdoorsy.adapters.PostsAdapter
 import com.example.outdoorsy.databinding.FragmentProfileBinding
 import com.example.outdoorsy.model.dao.PostModel
+import com.example.outdoorsy.viewmodel.ProfileViewModel
 import com.example.outdoorsy.viewmodel.UserViewModel
-import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import java.util.Date
+import com.example.outdoorsy.viewmodel.PostViewModel
+import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ProfileFragment : Fragment() {
-    private val userViewModel: UserViewModel by activityViewModels()
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
-    private val db = Firebase.firestore // Reference to Firestore
-    private lateinit var postsAdapter: PostsAdapter // Adapter for posts
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    private val userViewModel: UserViewModel by activityViewModels()
+    private val profileViewModel: ProfileViewModel by viewModels()
+    private val postViewModel: PostViewModel by viewModels()
+    private lateinit var postsAdapter: PostsAdapter
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupRecyclerView()
+        observeViewModels()
+    }
 
-        // Initialize RecyclerView
-//        postsAdapter = PostsAdapter(requireContext(), emptyList())
-//        binding.recyclerViewPosts.layoutManager = GridLayoutManager(requireContext(), 3)
-//        binding.recyclerViewPosts.adapter = postsAdapter
-        postsAdapter = PostsAdapter(requireContext(), emptyList()) { post ->
-
+    private fun setupRecyclerView() {
+        postsAdapter = PostsAdapter(requireContext()) { post ->
             navigateToPostDetails(post)
         }
         binding.recyclerViewPosts.layoutManager = GridLayoutManager(requireContext(), 3)
         binding.recyclerViewPosts.adapter = postsAdapter
+    }
 
-        val dummyPosts = listOf(
-            PostModel("1", "userId", "Post 1", "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", Date(), null, 0, 0),
-            PostModel("2", "userId", "Post 2", "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", Date(), null, 0, 0),
-            PostModel("3", "userId", "Post 3", "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", Date(), null, 0, 0),
-            PostModel("4", "userId", "Post 4", "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", Date(), null, 0, 0),
-            PostModel("5", "userId", "Post 5", "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", Date(), null, 0, 0),
-            PostModel("6", "userId", "Post 6", "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", Date(), null, 0, 0),
-            PostModel("7", "userId", "Post 7", "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", Date(), null, 0, 0)
+    private fun observeViewModels() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        userId?.let {
+            profileViewModel.fetchUserData(it)
+            profileViewModel.fetchUserPosts(it)
+            profileViewModel.fetchFollowersAndFollowingCounts(it)
+        }
 
-
-        )
-        postsAdapter.submitList(dummyPosts)
-
-        // Observe the logged-in user
-        userViewModel.user.observe(viewLifecycleOwner) { user ->
-            if (user != null) {
-                Log.d("ProfileFragment", "User loaded: ${user.fullname}")
-                binding.profileName.text = user.fullname
-                binding.profileEmail.text = user.email
-                binding.profileBio.text = user.bio ?: "No bio available"
-
-                // Load profile image
-                user.profileImg?.let { imgUrl ->
-                    Glide.with(this)
-                        .load(imgUrl)
-                        .placeholder(R.drawable.ic_profile_placeholder)
-                        .into(binding.profileImage)
-                }
-
-                // Fetch posts for the current user
-                fetchUserPosts(user.id)
-            } else {
-                Log.d("ProfileFragment", "User is null")
-                binding.profileName.text = "Guest"
-                binding.profileEmail.text = ""
-                binding.profileBio.text = ""
+        profileViewModel.user.observe(viewLifecycleOwner) { user ->
+            user?.let {
+                binding.profileName.text = it.fullname
+                binding.profileBio.text = it.bio ?: "No bio available"
+                Glide.with(this).load(it.profileImg).into(binding.profileImage)
             }
+        }
+
+       profileViewModel.posts.observe(viewLifecycleOwner) { posts ->
+            postsAdapter.submitList(posts)
+        }
+
+        profileViewModel.followersCount.observe(viewLifecycleOwner) { count ->
+            binding.followersCount.text = count.toString()
+        }
+
+        profileViewModel.followingCount.observe(viewLifecycleOwner) { count ->
+            binding.followingCount.text = count.toString()
         }
     }
 
-    private fun fetchUserPosts(userId: String) {
-        db.collection("posts")
-            .whereEqualTo("userId", userId) // Fetch posts by this user
-            .orderBy("timestamp", Query.Direction.DESCENDING) // Optional: Sort by newest first
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                val posts = querySnapshot.documents.mapNotNull { it.toObject(PostModel::class.java) }
-                Log.d("ProfileFragment", "Fetched ${posts.size} posts")
-                // Use the posts list (e.g., update the RecyclerView adapter)
-                postsAdapter.submitList(posts)
-            }
-            .addOnFailureListener { exception ->
-                Log.e("Firestore", "Error fetching posts: ${exception.message}")
-            }
-    }
     private fun navigateToPostDetails(post: PostModel) {
-        // Use Safe Args to create the action
         val action = ProfileFragmentDirections.actionProfileFragmentToPostDetailsFragment(post)
         findNavController().navigate(action)
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -118,6 +92,12 @@ class ProfileFragment : Fragment() {
 }
 
 
+
+
+
+//
+//
+//
 //package com.example.outdoorsy.fragments
 //
 //import android.os.Bundle
@@ -125,52 +105,90 @@ class ProfileFragment : Fragment() {
 //import android.view.LayoutInflater
 //import android.view.View
 //import android.view.ViewGroup
-//import android.widget.Button
-//import androidx.appcompat.widget.Toolbar
+//import androidx.compose.ui.semantics.text
 //import androidx.fragment.app.Fragment
-//import androidx.navigation.fragment.findNavController
-//import com.example.outdoorsy.R
-//import com.example.outdoorsy.databinding.FragmentProfileBinding
 //import androidx.fragment.app.activityViewModels
+//import androidx.fragment.app.viewModels
+//import androidx.navigation.fragment.findNavController
+//import androidx.recyclerview.widget.GridLayoutManager
+//import com.bumptech.glide.Glide
+//import com.example.outdoorsy.R
 //import com.example.outdoorsy.adapters.PostsAdapter
+//import com.example.outdoorsy.databinding.FragmentProfileBinding
+//import com.example.outdoorsy.model.dao.PostModel
+//import com.example.outdoorsy.viewmodel.ProfileViewModel
 //import com.example.outdoorsy.viewmodel.UserViewModel
-//import com.google.firebase.firestore.ktx.firestore
-//import com.google.firebase.ktx.Firebase
+//import com.example.outdoorsy.viewmodel.PostViewModel
+//import com.google.firebase.auth.FirebaseAuth
+//import dagger.hilt.android.AndroidEntryPoint
 //
+//@AndroidEntryPoint
 //class ProfileFragment : Fragment() {
-//    private val userViewModel: UserViewModel by activityViewModels()
 //    private var _binding: FragmentProfileBinding? = null
 //    private val binding get() = _binding!!
-//    private val postsAdapter by lazy { PostsAdapter(requireContext(), mutableListOf()) }
-//    private val firestore = Firebase.firestore
-//    override fun onCreateView(
-//        inflater: LayoutInflater, container: ViewGroup?,
-//        savedInstanceState: Bundle?
-//    ): View? {
-//        // Inflate the layout for this fragment
-////        return inflater.inflate(R.layout.fragment_profile, container, false)
+//
+//    private val userViewModel: UserViewModel by activityViewModels()
+//    private val profileViewModel: ProfileViewModel by viewModels()
+//    private val postViewModel: PostViewModel by viewModels()
+//    private lateinit var postsAdapter: PostsAdapter
+//
+//    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 //        _binding = FragmentProfileBinding.inflate(inflater, container, false)
 //        return binding.root
 //    }
+//
 //    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 //        super.onViewCreated(view, savedInstanceState)
+//        setupRecyclerView()
+//        observeViewModels()
+//    }
 //
-//        userViewModel.user.observe(viewLifecycleOwner) { user ->
-//            if (user != null) {
-//                Log.d("ProfileFragment", "User loaded: ${user.fullname}")
-//                // Update the UI with user details
-//                binding.profileName.text = user.fullname
-//                binding.profileEmail.text = user.email
-//                binding.profileBio.text = user.bio ?: "No bio available"
-//                // If profile image is available, load it using Glide or similar library
-//                // Glide.with(this).load(user.profileImg).into(binding.profileImage)
-//            } else {
-//                Log.d("ProfileFragment", "User is null")
-//                // Handle case where user is null (e.g., logout state)
-//                binding.profileName.text = "Guest"
-//                binding.profileEmail.text = ""
-//                binding.profileBio.text = ""
+//    private fun setupRecyclerView() {
+//        postsAdapter = PostsAdapter(requireContext()) { post ->
+//            navigateToPostDetails(post)
+//        }
+//        binding.recyclerViewPosts.adapter = postsAdapter
+//    }
+//
+//    private fun observeViewModels() {
+//        val userId = FirebaseAuth.getInstance().currentUser?.uid
+//        userId?.let {
+//            profileViewModel.fetchUserData(it)
+//            profileViewModel.fetchUserPosts(it)
+//            profileViewModel.fetchFollowersAndFollowingCounts(it)
+//        }
+//
+//        profileViewModel.user.observe(viewLifecycleOwner) { user ->
+//            user?.let {
+//                binding.profileName.text = it.fullname
+//                binding.profileBio.text = it.bio ?: "No bio available"
+//                Glide.with(this).load(it.profileImg).into(binding.profileImage)
 //            }
 //        }
+//
+//        postViewModel.posts.observe(viewLifecycleOwner) { posts ->
+//            postsAdapter.submitList(posts)
+//        }
+//
+//        profileViewModel.followersCount.observe(viewLifecycleOwner) { count ->
+//            binding.followersCount.text = count.toString()
+//        }
+//
+//        profileViewModel.followingCount.observe(viewLifecycleOwner) { count ->
+//            binding.followingCount.text = count.toString()
+//        }
+//    }
+//
+//    private fun navigateToPostDetails(post: PostModel) {
+//        val action = ProfileFragmentDirections.actionProfileFragmentToPostDetailsFragment(post)
+//        findNavController().navigate(action)
+//    }
+//
+//    override fun onDestroyView() {
+//        super.onDestroyView()
+//        _binding = null
 //    }
 //}
+//
+//
+//

@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.outdoorsy.databinding.FragmentPostDetailsBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class PostDetailsFragment : Fragment() {
 
     private var _binding: FragmentPostDetailsBinding? = null

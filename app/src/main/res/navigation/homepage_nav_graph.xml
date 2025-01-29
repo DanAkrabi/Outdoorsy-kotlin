@@ -9,17 +9,38 @@
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.example.outdoorsy.fragments.HomepageFragment"
+        tools:layout="@layout/fragment_homepage"
         android:label="Homepage">
         <action
             android:id="@+id/action_homepageFragment_to_postDetailsFragment"
             app:destination="@id/postDetailsFragment" />
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_search"
+            app:destination="@id/navigation_search" />
     </fragment>
-    <!-- Profile Fragment -->
-<!--    <fragment-->
-<!--        android:id="@+id/navigation_profile"-->
-<!--        android:name="com.example.outdoorsy.fragments.ProfileFragment"-->
-<!--        android:label="Profile" />-->
+    <fragment
+        android:id="@+id/navigation_search"
+        android:name="com.example.outdoorsy.fragments.SearchFragment"
+        android:label="Search"
+        tools:layout="@layout/fragment_search">
+        <action
+            android:id="@+id/action_searchFragment_to_userProfileFragment"
+            app:destination="@id/userProfileFragment" />
+    </fragment>
+    <!-- Searched User Profile Fragment -->
+    <fragment
+        android:id="@+id/searchedUserProfileFragment"
+        android:name="com.example.outdoorsy.fragments.UserProfileFragment"
+        android:label="User Profile" />
 
+    <fragment
+        android:id="@+id/userProfileFragment"
+        android:name="com.example.outdoorsy.fragments.UserProfileFragment"
+        android:label="User Profile">
+        <argument
+            android:name="userId"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/navigation_camera"
         android:name="com.example.outdoorsy.fragments.CameraFragment"
@@ -42,23 +63,6 @@
             app:argType="com.example.outdoorsy.model.dao.PostModel" />
     </fragment>
 
-<!--    <fragment-->
-<!--        android:id="@+id/profileFragment"-->
-<!--        android:name="com.example.outdoorsy.fragments.ProfileFragment"-->
-<!--        android:label="ProfileFragment"-->
-<!--        tools:layout="@layout/fragment_profile">-->
-<!--        <action-->
-<!--            android:id="@+id/action_profileFragment_to_postDetailsFragment"-->
-<!--            app:destination="@id/postDetailsFragment" />-->
-<!--    </fragment>-->
 
-<!--    <fragment-->
-<!--        android:id="@+id/postDetailsFragment"-->
-<!--        android:name="com.example.outdoorsy.fragments.PostDetailsFragment"-->
-<!--        android:label="Post Details">-->
-<!--        <argument-->
-<!--            android:name="post"-->
-<!--            app:argType="com.example.outdoorsy.model.dao.PostModel" />-->
-<!--    </fragment>-->
 
 </navigation>

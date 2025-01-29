@@ -17,7 +17,9 @@ import androidx.activity.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HomepageActivity : AppCompatActivity() {
     private val userViewModel: UserViewModel by viewModels()
     private lateinit var navController: NavController // Declare NavController at the class level
@@ -42,18 +44,27 @@ class HomepageActivity : AppCompatActivity() {
         bottomNavigationView.setupWithNavController(navController)
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
+                R.id.navigation_home -> {
+                    navController.navigate(R.id.navigation_home)
+                    true
+                }
+
                 R.id.navigation_picture -> {
-                    // Navigate to CameraFragment when camera button is selected
                     navController.navigate(R.id.navigation_camera)
                     true
                 }
-                else -> {
-                    // Handle navigation to the selected fragment, ensuring we replace the fragment in view
-                    if (!navController.popBackStack(item.itemId, false)) {
-                        navController.navigate(item.itemId)
-                    }
+
+                R.id.navigation_search -> {
+                    navController.navigate(R.id.navigation_search)
                     true
                 }
+
+                R.id.navigation_profile -> {
+                    navController.navigate(R.id.navigation_profile)
+                    true
+                }
+
+                else -> false
             }
         }
     }

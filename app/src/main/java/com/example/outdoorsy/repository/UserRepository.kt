@@ -1,23 +1,87 @@
 package com.example.outdoorsy.repository
 
-import android.graphics.Bitmap
-import com.example.outdoorsy.model.dao.FirebaseModel
+import android.util.Log
+import androidx.lifecycle.viewModelScope
 import com.example.outdoorsy.model.dao.UserModel
+import com.example.outdoorsy.model.dao.FirebaseModel
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
-class UserRepository(private val firebaseModel: FirebaseModel) {
-//    private val firebaseModel: FirebaseModel = FirebaseModel()
-    // Create a new user in Firestore
-    suspend fun createUser(user: UserModel) {
-        firebaseModel.saveUser(user)
+
+class UserRepository @Inject constructor(
+    private val firebaseModel: FirebaseModel,
+//    private val firestore: FirebaseFirestore
+) {
+
+    private val db = FirebaseFirestore.getInstance()
+
+    suspend fun getFollowersCount(userId: String): Int {
+        return try {
+            val followersSnapshot = db.collection("users")
+                .document(userId)
+                .collection("followers")
+                .get()
+                .await()
+
+            var totalFollowers = 0
+            for (document in followersSnapshot.documents) {
+                val followerIds = document.get("followerId") as? List<String>
+                totalFollowers += followerIds?.size ?: 0
+            }
+
+            totalFollowers
+        } catch (e: Exception) {
+            Log.e("Firestore", "Error fetching followers: ${e.message}")
+            0
+        }
     }
 
-    // Fetch a user from Firestore
+    suspend fun getFollowingCount(userId: String): Int {
+        return try {
+            val followingSnapshot = db.collection("users")
+                .document(userId)
+                .collection("following") // Access the "following" subcollection
+                .get()
+                .await()
+
+            var totalFollowing = 0
+            for (document in followingSnapshot.documents) {
+                val followingIds = document.get("followingId") as? List<String> // Get the "followingId" array
+                totalFollowing += followingIds?.size ?: 0
+            }
+
+            totalFollowing
+        } catch (e: Exception) {
+            Log.e("Firestore", "Error fetching following: ${e.message}")
+            0
+        }
+    }
+    suspend fun getUserById(userId: String): UserModel? {
+        return try {
+            val documentSnapshot = db.collection("users")
+                .document(userId)
+                .get()
+                .await()
+
+            documentSnapshot.toObject(UserModel::class.java)?.also {
+                it.id = documentSnapshot.id // Set the user ID explicitly
+            }
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Error fetching user by ID: ${e.message}")
+            null
+        }
+    }
+
+
     suspend fun fetchUser(userId: String): UserModel? {
         return firebaseModel.getUser(userId)
     }
 
 
 }
+
 
 //
 //package com.example.outdoorsy.repository
