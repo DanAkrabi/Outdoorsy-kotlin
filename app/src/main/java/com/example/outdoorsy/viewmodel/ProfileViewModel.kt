@@ -1,6 +1,5 @@
 package com.example.outdoorsy.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,19 +8,16 @@ import com.example.outdoorsy.model.dao.PostModel
 import com.example.outdoorsy.model.dao.UserModel
 import com.example.outdoorsy.repository.PostRepository
 import com.example.outdoorsy.repository.UserRepository
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val postRepository: PostRepository
+    private val postRepository: PostRepository,
+//    private val userViewModel: UserViewModel,
+
 ) : ViewModel() {
 
     private val _posts = MutableLiveData<List<PostModel>>()
@@ -56,81 +52,3 @@ class ProfileViewModel @Inject constructor(
     }
 }
 
-
-//package com.example.outdoorsy.viewmodel
-//
-//import android.util.Log
-//import androidx.lifecycle.LiveData
-//import androidx.lifecycle.MutableLiveData
-//import androidx.lifecycle.ViewModel
-//import androidx.lifecycle.viewModelScope
-//import com.example.outdoorsy.model.dao.PostModel
-//import com.example.outdoorsy.model.dao.UserModel
-//import com.example.outdoorsy.repository.PostRepository
-//import com.example.outdoorsy.repository.UserRepository
-//import com.google.firebase.firestore.Query
-//import com.google.firebase.firestore.ktx.firestore
-//import com.google.firebase.ktx.Firebase
-//import dagger.hilt.android.lifecycle.HiltViewModel
-//import kotlinx.coroutines.launch
-//import kotlinx.coroutines.tasks.await
-//import javax.inject.Inject
-//
-//@HiltViewModel
-//class ProfileViewModel @Inject constructor(private val userRepository: UserRepository,
-//                                           private val postRepository: PostRepository
-//): ViewModel() {
-//    private val _posts = MutableLiveData<List<PostModel>>()
-//    val posts: LiveData<List<PostModel>> get() = _posts
-//
-//    private val _followersCount = MutableLiveData<Int>()
-//    val followersCount: LiveData<Int> get() = _followersCount
-//
-//    private val _followingCount = MutableLiveData<Int>()
-//    val followingCount: LiveData<Int> get() = _followingCount
-//
-//    private val _user = MutableLiveData<UserModel?>()
-//    val user: MutableLiveData<UserModel?> get() = _user
-//
-//    fun fetchFollowersAndFollowing(userId: String) {
-//        // Fetch followers and following counts
-//        fetchFollowersCount(userId)
-//        fetchFollowingCount(userId)
-//    }
-//
-//
-//
-//    private fun fetchFollowersCount(userId: String) {
-//        viewModelScope.launch {
-//            try {
-//                val followersCount = userRepository.getFollowersCount(userId)
-//                _followersCount.postValue(followersCount)
-//            } catch (e: Exception) {
-//                Log.e("ProfileViewModel", "Error fetching followers count: ${e.message}")
-//            }
-//        }
-//    }
-//
-//    private fun fetchFollowingCount(userId: String) {
-//        viewModelScope.launch {
-//            try {
-//                val followingCount = userRepository.getFollowingCount(userId)
-//                _followingCount.postValue(followingCount)
-//            } catch (e: Exception) {
-//                Log.e("ProfileViewModel", "Error fetching following count: ${e.message}")
-//            }
-//        }
-//    }
-//    fun fetchUserPosts(userId: String) {
-//        // Fetch user posts
-//        viewModelScope.launch {
-//            try {
-//                val posts = postRepository.getUserPosts(userId) // Modify to fetch posts for specific user
-//                _posts.postValue(posts)
-//            } catch (e: Exception) {
-//                Log.e("ProfileViewModel", "Error fetching posts: ${e.message}")
-//            }
-//        }
-//    }
-//}
-//

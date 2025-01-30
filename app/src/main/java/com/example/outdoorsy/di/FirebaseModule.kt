@@ -25,12 +25,3 @@ object FirebaseModule {
 }
 
 
-//@Module
-//@InstallIn(SingletonComponent::class)  // Ensures the module is available for the entire app
-//object FirebaseModule {
-//
-//    @Provides
-//    fun provideFirebaseFirestore(): FirebaseFirestore {
-//        return FirebaseFirestore.getInstance()
-//    }
-//}

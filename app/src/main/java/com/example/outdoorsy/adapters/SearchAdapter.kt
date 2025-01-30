@@ -42,6 +42,11 @@ class SearchAdapter(private val onUserClick: (UserModel) -> Unit) :
                 .load(user.profileImg)
                 .placeholder(R.drawable.ic_profile_placeholder)
                 .into(binding.profileImage)
+
+            // Handle user click and navigate to UserProfileFragment
+            binding.root.setOnClickListener {
+                onUserClick(user) // 🔥 Pass user data to `SearchFragment`
+            }
         }
     }
 
