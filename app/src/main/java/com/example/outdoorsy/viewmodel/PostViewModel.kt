@@ -46,7 +46,7 @@ class PostViewModel @Inject constructor(
             postRepository.getPostLikesCount(postId) { likes ->
                 _likesCount.postValue(likes)
             }
-
+//            fetchCommentsForPost(postId)
         }
     }
 
@@ -57,13 +57,27 @@ class PostViewModel @Inject constructor(
             _comments.postValue(comments)
         }
     }
+//    fun addCommentToPost(postId: String, comment: CommentModel) {
+//        viewModelScope.launch {
+//            postRepository.addCommentToPost(postId, comment)
+//            // Re-fetch the post details to update the LiveData observed by the UI
+//            fetchPostDetails(postId)
+//        }
+//    }
+
     fun addCommentToPost(postId: String, comment: CommentModel) {
         viewModelScope.launch {
-            postRepository.addCommentToPost(postId, comment)
-            // Re-fetch the post details to update the LiveData observed by the UI
-            fetchPostDetails(postId)
+            val newCommentCount = postRepository.addCommentToPost(postId, comment)
+
+            if (newCommentCount != -1) { // Ensure no error occurred
+                _post.value?.let { updatedPost ->
+                    _post.postValue(updatedPost.copy(commentsCount = newCommentCount))
+                }
+            }
         }
     }
+
+
     // Handle liking a post (increment or decrement like count)
     fun toggleLike(postId: String, userId: String) {
         viewModelScope.launch {

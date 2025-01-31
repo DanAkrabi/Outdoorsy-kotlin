@@ -33,9 +33,12 @@ class PostRepository @Inject constructor(
     }
 
     // Add a comment to a post
-    suspend fun addCommentToPost(postId: String, comment: CommentModel) {
-        firebaseModel.addCommentToPost(postId,comment)
-
+//    suspend fun addCommentToPost(postId: String, comment: CommentModel) {
+//        firebaseModel.addCommentToPost(postId,comment)
+//
+//    }
+    suspend fun addCommentToPost(postId: String, comment: CommentModel): Int {
+        return firebaseModel.addCommentToPost(postId, comment)
     }
 
     // Toggle like on a post (increment or decrement like count)

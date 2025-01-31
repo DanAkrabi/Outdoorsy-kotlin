@@ -149,21 +149,43 @@ class FirebaseModel @Inject constructor(
 
     // Get comments for a post
 
-    suspend fun addCommentToPost(postId: String, comment: CommentModel) {
-        try {
-            val commentRef = firestore.collection("posts")
-                .document(postId)
-                .collection("comments")
-                .document()
+//    suspend fun addCommentToPost(postId: String, comment: CommentModel) {
+//        try {
+//            val commentRef = firestore.collection("posts")
+//                .document(postId)
+//                .collection("comments")
+//                .document()
+//
+//            commentRef.set(comment).await()
+//
+//            // Atomically increment the comments count for the post
+//            incrementCommentsCount(postId)
+//        } catch (e: Exception) {
+//            Log.e("FirestoreError", "Error in addCommentToPost: ${e.message}")
+//        }
+//    }
+suspend fun addCommentToPost(postId: String, comment: CommentModel): Int {
+    return try {
+        val postRef = firestore.collection("posts").document(postId)
+        val commentRef = postRef.collection("comments").document()
 
-            commentRef.set(comment).await()
+        commentRef.set(comment).await()
 
-            // Atomically increment the comments count for the post
-            incrementCommentsCount(postId)
-        } catch (e: Exception) {
-            Log.e("FirestoreError", "Error in addCommentToPost: ${e.message}")
-        }
+        // Atomically increment the comments count and return the updated value
+        firestore.runTransaction { transaction ->
+            val postSnapshot = transaction.get(postRef)
+            val currentCount = postSnapshot.getLong("commentsCount") ?: 0
+            val updatedCount = currentCount + 1
+            transaction.update(postRef, "commentsCount", updatedCount)
+            updatedCount.toInt() // ✅ Ensure this function returns an Int
+        }.await()
+    } catch (e: Exception) {
+        Log.e("FirestoreError", "Error in addCommentToPost: ${e.message}")
+        -1 // Return -1 in case of an error
     }
+}
+
+
 
     // Helper method to atomically increment the comment count for a post
     private suspend fun incrementCommentsCount(postId: String) {
