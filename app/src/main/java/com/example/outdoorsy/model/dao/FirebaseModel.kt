@@ -31,6 +31,8 @@ class FirebaseModel @Inject constructor(
 
     private val database =firestore // Initializing a firebase instance
     private val usersCollection = firestore.collection("users")
+    private val postsCollection = firestore.collection("posts")
+
 //    private val storage = Firebase.storage
 
 //    init {
@@ -381,6 +383,44 @@ suspend fun getCommentsForPost(postId: String): List<CommentModel> {
         emptyList()
     }
 }
+
+    fun getPostLikesCount(postId: String, callback: (Long) -> Unit) {
+        postsCollection.document(postId)
+            .addSnapshotListener { snapshot, _ ->
+                if (snapshot != null && snapshot.exists()) {
+                    val likesCount = snapshot.getLong("likesCount") ?: 0
+                    callback(likesCount)
+                } else {
+                    callback(0)
+                }
+            }
+    }
+
+    suspend fun toggleLike(postId: String, userId: String): Long {
+        return try {
+            val postRef = firestore.collection("posts").document(postId)
+
+            firestore.runTransaction { transaction ->
+                val postSnapshot = transaction.get(postRef)
+
+                val likesCount = postSnapshot.getLong("likesCount") ?: 0
+                val likedBy = postSnapshot.get("likedBy") as? MutableList<String> ?: mutableListOf()
+
+                if (likedBy.contains(userId)) {
+                    likedBy.remove(userId)
+                    transaction.update(postRef, mapOf("likedBy" to likedBy, "likesCount" to FieldValue.increment(-1)))
+                } else {
+                    likedBy.add(userId)
+                    transaction.update(postRef, mapOf("likedBy" to likedBy, "likesCount" to FieldValue.increment(1)))
+                }
+
+                likedBy.size.toLong()
+            }.await()
+        } catch (e: Exception) {
+            Log.e("FirestoreError", "Error toggling like: ${e.message}")
+            0L // Return 0 if an error occurs
+        }
+    }
 
 }
 

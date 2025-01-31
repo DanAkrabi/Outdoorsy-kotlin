@@ -26,6 +26,8 @@ class PostViewModel @Inject constructor(
     val comments: LiveData<List<CommentModel>> get() = _comments
 
 
+    private val _likesCount = MutableLiveData<Long>()
+    val likesCount: LiveData<Long> get() = _likesCount
 
     // Fetch posts for a user
     fun fetchUserPosts(userId: String) {
@@ -40,7 +42,11 @@ class PostViewModel @Inject constructor(
         viewModelScope.launch {
             val post = postRepository.getPostById(postId)
             _post.postValue(post)
-//            fetchCommentsForPost(postId)
+
+            postRepository.getPostLikesCount(postId) { likes ->
+                _likesCount.postValue(likes)
+            }
+
         }
     }
 
@@ -59,10 +65,10 @@ class PostViewModel @Inject constructor(
         }
     }
     // Handle liking a post (increment or decrement like count)
-    fun toggleLike(postId: String) {
+    fun toggleLike(postId: String, userId: String) {
         viewModelScope.launch {
-            val updatedPost = postRepository.toggleLike(postId)
-            _post.postValue(updatedPost)
+            val newLikesCount = postRepository.toggleLike(postId, userId)
+            _likesCount.postValue(newLikesCount) // Update LiveData
         }
     }
 

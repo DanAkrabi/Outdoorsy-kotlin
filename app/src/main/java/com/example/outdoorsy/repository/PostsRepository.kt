@@ -18,7 +18,9 @@ class PostRepository @Inject constructor(
        return firebaseModel.getUserPosts(userId)
     }
 
-    fun getPostLikesCount
+    fun getPostLikesCount(postId: String, callback: (Long) -> Unit) {
+        firebaseModel.getPostLikesCount(postId, callback)
+    }
 
     // Fetch a single post by ID
     suspend fun getPostById(postId: String): PostModel {
@@ -37,9 +39,10 @@ class PostRepository @Inject constructor(
     }
 
     // Toggle like on a post (increment or decrement like count)
-    suspend fun toggleLike(postId: String): PostModel {
-        return firebaseModel.toggleLike(postId)
+    suspend fun toggleLike(postId: String, userId: String): Long {
+        return firebaseModel.toggleLike(postId, userId)
     }
+
 
 
 }

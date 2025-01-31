@@ -48,6 +48,7 @@ class PostDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         postViewModel.fetchPostDetails(args.post.postId)
+
         setupObservers()
         commentsViewModel.fetchComments(args.post.postId)
         setupInteractionListeners(args.post)
@@ -101,11 +102,13 @@ class PostDetailsFragment : Fragment() {
         // ✅ Observe post updates to get the latest commentsCount --not to delete--
         postViewModel.post.observe(viewLifecycleOwner) { updatedPost ->
             binding.commentsCount.text = "${updatedPost.commentsCount} Comments" // ✅ Correctly updates from Firestore
-            binding.likesCount.text = "${updatedPost.likesCount} Likes"
+//            binding.likesCount.text = "${updatedPost.likesCount} Likes"
             commentsViewModel.fetchComments(args.post.postId)
 
         }
-
+        postViewModel.likesCount.observe(viewLifecycleOwner) { updatedLikes ->
+            binding.likesCount.text = "$updatedLikes Likes"
+        }
 
     }
 
@@ -132,7 +135,12 @@ class PostDetailsFragment : Fragment() {
                 binding.editTextComment.text.clear()
             }
 
-         }
+        }
+        binding.buttonLike.setOnClickListener {
+            val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return@setOnClickListener
+
+            postViewModel.toggleLike(post.postId, currentUserId)
+        }
     }
 
 
