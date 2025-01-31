@@ -16,7 +16,7 @@ import java.util.*
 class RegisterViewModel : ViewModel() {
     private val firebaseAuth = FirebaseAuth.getInstance()
     private val firestore = Firebase.firestore
-    private val firebaseModel = FirebaseModel(firestore)
+    private val firebaseModel = FirebaseModel(firestore,firebaseAuth)
 
     private val _registrationState = MutableLiveData<RegistrationState>(RegistrationState.Empty)
     val registrationState: LiveData<RegistrationState> get() = _registrationState

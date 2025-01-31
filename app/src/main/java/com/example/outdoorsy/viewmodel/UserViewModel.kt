@@ -16,7 +16,6 @@ import javax.inject.Inject
 @HiltViewModel
 class UserViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val firestore: FirebaseFirestore
 ) : ViewModel() {
 
     val _user = MutableLiveData<UserModel?>()
@@ -33,6 +32,40 @@ class UserViewModel @Inject constructor(
 
     private val auth = FirebaseAuth.getInstance()
     private val loggedInUserId = auth.currentUser?.uid
+//    fun getUserDetails(userId: String) {
+//        viewModelScope.launch {
+//            val userDetails = userRepository.getUserById(userId)
+//            _user.postValue(userDetails)
+//        }
+//    }
+//    fun getUserDetails(userId: String, callback: (String?, String?) -> Unit) {
+//        viewModelScope.launch {
+//            try {
+//                val user = userRepository.getUserById(userId)
+//                callback(user?.fullname, user?.profileImg)
+//            } catch (e: Exception) {
+//                callback(null, null)
+//            }
+//        }
+//    }
+fun getUserDetails(userId: String, callback: (String?, String?) -> Unit) {
+    viewModelScope.launch {
+        Log.d("UserViewModel", "Fetching details for userID: $userId")
+        try {
+            val user = userRepository.getUserById(userId)
+            if (user != null) {
+                Log.d("UserViewModel", "User found: ${user.fullname}")
+                callback(user.fullname, user.profileImg)
+            } else {
+                Log.d("UserViewModel", "No user found for ID: $userId")
+                callback(null, null)
+            }
+        } catch (e: Exception) {
+            Log.e("UserViewModel", "Error fetching user details: ${e.message}", e)
+            callback(null, null)
+        }
+    }
+}
 
     // Fetch user by ID and update LiveData
     fun fetchUser(userId: String) {

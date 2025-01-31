@@ -4,5 +4,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="profile_image_desc">Profile image description</string>
     <string name="sample_bio">This is a sample biography text for the user profile, describing the users background, interests, or other relevant information.</string>
-
+    <string name="likes_label">%d Likes</string>
+    <string name="comments_label">%d Comments</string>
 </resources>

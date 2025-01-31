@@ -31,25 +31,25 @@ class HomepageViewModel @Inject constructor(private val postRepository: PostRepo
 
     private val _isLoading = MutableLiveData<Boolean>(false)
     val isLoading: LiveData<Boolean> get() = _isLoading
-    fun fetchHomepagePosts() {
-        viewModelScope.launch {
-            _isLoading.value = true
-            try {
-                val posts = postRepository.fetchHomepagePosts()
-                _posts.value = posts
-            } catch (e: Exception) {
-                // Handle error
-            } finally {
-                _isLoading.value = false
-            }
-        }
-    }
-    fun searchPosts(query: String) {
-        viewModelScope.launch {
-            val filteredPosts = postRepository.searchPostsByQuery(query) // Implement this in your repository
-            _posts.value = filteredPosts
-        }
-    }
+//    fun fetchHomepagePosts() {
+//        viewModelScope.launch {
+//            _isLoading.value = true
+//            try {
+//                val posts = postRepository.fetchHomepagePosts()
+//                _posts.value = posts
+//            } catch (e: Exception) {
+//                // Handle error
+//            } finally {
+//                _isLoading.value = false
+//            }
+//        }
+//    }
+//    fun searchPosts(query: String) {
+//        viewModelScope.launch {
+//            val filteredPosts = postRepository.searchPostsByQuery(query) // Implement this in your repository
+//            _posts.value = filteredPosts
+//        }
+//    }
 
 }
 

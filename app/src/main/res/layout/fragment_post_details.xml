@@ -1,49 +1,172 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
-<ScrollView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
+    <data>
+        <variable
+            name="post"
+            type="com.example.outdoorsy.model.dao.PostModel"/>
+    </data>
+
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:padding="16dp">
 
-        <!-- Image -->
-        <ImageView
-            android:id="@+id/imagePost"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:contentDescription="TODO"
-            android:scaleType="centerCrop" />
-
-        <!-- Caption -->
-        <TextView
-            android:id="@+id/textCaption"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:text="Caption"
-            android:textSize="16sp" />
+            android:orientation="vertical"
+            android:paddingBottom="16dp">
 
-        <!-- Likes -->
-        <TextView
-            android:id="@+id/likesCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="100 Likes"
-            android:layout_marginTop="8dp" />
+            <!-- User Info Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingBottom="8dp">
 
-        <!-- Comments -->
-        <TextView
-            android:id="@+id/commentsCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="20 Comments"
-            android:layout_marginTop="4dp" />
+                <ImageView
+                    android:id="@+id/imageUserProfile"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_profile_placeholder"
+                    android:background="@drawable/circle_background"/>
 
-    </LinearLayout>
-</ScrollView>
+                <TextView
+                    android:id="@+id/textUsername"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{post.fullname}"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginStart="8dp"/>
+
+                <TextView
+                    android:id="@+id/textTimestamp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{post.timestamp.toString()}"
+                    android:textSize="12sp"
+                    android:textColor="@android:color/darker_gray"
+                    android:layout_marginStart="8dp"/>
+            </LinearLayout>
+
+            <!-- Post Image -->
+            <ImageView
+                android:id="@+id/imagePost"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:scaleType="centerCrop"
+                android:contentDescription="Post Image"/>
+
+            <!-- Post Caption -->
+            <TextView
+                android:id="@+id/textCaption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{post.textContent}"
+                android:textSize="16sp"
+                android:paddingTop="8dp"/>
+
+            <!-- Like & Comment Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingVertical="8dp">
+
+                <!-- Like Button -->
+                <ImageButton
+                    android:id="@+id/buttonLike"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_heart_selector"
+                    android:contentDescription="Like Button"/>
+
+                <!-- Likes Count -->
+                <TextView
+                    android:id="@+id/likesCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{@string/likes_label(post.likesCount)}"
+                    android:layout_marginStart="8dp"/>
+
+                <!-- Comments Count -->
+                <TextView
+                    android:id="@+id/commentsCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{@string/comments_label(post.commentsCount)}"
+                    android:layout_marginStart="16dp"/>
+            </LinearLayout>
+
+            <!-- Toggle Comments Button -->
+            <Button
+                android:id="@+id/buttonToggleComments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Show Comments"
+                android:layout_marginTop="8dp"/>
+
+            <!-- Comments Section -->
+            <LinearLayout
+                android:id="@+id/commentsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/textCommentsTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Comments"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:paddingTop="8dp"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewComments"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:scrollbars="vertical"/>
+
+                <!-- Add Comment Section -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingTop="8dp">
+
+                    <EditText
+                        android:id="@+id/editTextComment"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="Add a comment..."
+                        android:background="@android:drawable/edit_text"
+                        android:padding="8dp"/>
+
+                    <ImageButton
+                        android:id="@+id/buttonPostComment"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_send"
+                        android:contentDescription="Post Comment"/>
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 </layout>
-

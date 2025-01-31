@@ -44,7 +44,7 @@ class UserProfileFragment : Fragment() {
 
         val userId = args.userId
         userProfileViewModel.fetchUserProfile(userId)
-        postViewModel.fetchUserPosts(userId) // Consider moving to UserProfileViewModel
+        postViewModel.fetchUserPosts(userId)
 
         setupRecyclerView()
         observeUserProfile()

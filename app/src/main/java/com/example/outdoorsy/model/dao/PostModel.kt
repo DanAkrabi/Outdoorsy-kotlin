@@ -14,6 +14,8 @@ data class PostModel(
     val imageUrl: String? = null,
     val timestamp: Date = Date(),
     val location: String? = null,
-    val likesCount: Int = 0,
-    val commentsCount: Int = 0
+    val likesCount: Long = 0,
+    val commentsCount: Int = 0,
+    val fullname:String="",
+    var ProfileImg:String?=null
 ) : Parcelable
