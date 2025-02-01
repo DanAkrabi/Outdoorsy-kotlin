@@ -2,14 +2,13 @@ package com.example.outdoorsy.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.outdoorsy.R
+import com.example.outdoorsy.databinding.ItemPostBinding
 import com.example.outdoorsy.model.dao.PostModel
 
 class PostsAdapter(
@@ -18,28 +17,28 @@ class PostsAdapter(
 ) : ListAdapter<PostModel, PostsAdapter.PostViewHolder>(PostDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_post, parent, false)
-        return PostViewHolder(view)
+        val binding = ItemPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return PostViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
-        val post = getItem(position) // Get post from ListAdapter
-
-        // Load post image using Glide
-        Glide.with(context)
-            .load(post.imageUrl)
-            .placeholder(R.drawable.ic_placeholder_image)
-            .into(holder.postImage)
-
-        // Set click listener
-        holder.itemView.setOnClickListener { onPostClicked(post) }
+        val post = getItem(position)
+        holder.bind(post)
     }
 
-    class PostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val postImage: ImageView = itemView.findViewById(R.id.imagePost)
+    inner class PostViewHolder(private val binding: ItemPostBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(post: PostModel) {
+            // Load post image using Glide
+            Glide.with(context)
+                .load(post.imageUrl)
+                .placeholder(R.drawable.ic_placeholder_image)
+                .into(binding.imagePost)
+
+            // Set click listener
+            binding.root.setOnClickListener { onPostClicked(post) }
+        }
     }
 
-    // DiffUtil to compare PostModel objects
     class PostDiffCallback : DiffUtil.ItemCallback<PostModel>() {
         override fun areItemsTheSame(oldItem: PostModel, newItem: PostModel): Boolean {
             // Compare unique IDs
@@ -52,3 +51,5 @@ class PostsAdapter(
         }
     }
 }
+
+

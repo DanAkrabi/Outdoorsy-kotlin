@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.outdoorsy.adapters.Destination
 import com.example.outdoorsy.model.dao.PostModel
 import com.example.outdoorsy.repository.PostRepository
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,6 +33,61 @@ class HomepageViewModel @Inject constructor(private val postRepository: PostRepo
     private val _isLoading = MutableLiveData<Boolean>(false)
     val isLoading: LiveData<Boolean> get() = _isLoading
 //    fun fetchHomepagePosts() {
+//        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+//
+//        viewModelScope.launch {
+//            val posts = postRepository.getFeedPosts(currentUserId)
+//            _posts.postValue(posts) // ✅ Update LiveData
+//        }
+//    }
+//    fun fetchHomepagePosts() {
+//        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+//
+//        viewModelScope.launch {
+//            _isLoading.postValue(true)
+//            val posts = postRepository.getFeedPosts(currentUserId) // ✅ Fetch posts
+//            _posts.postValue(posts) // ✅ Update UI
+//            _isLoading.postValue(false)
+//        }
+//    }
+//fun fetchHomepagePosts() {
+//    val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+//
+//    viewModelScope.launch {
+//        _isLoading.postValue(true)
+//
+//        val posts = postRepository.getFeedPosts(currentUserId) // ✅ Fetch posts
+//        Log.d("HomepageViewModel", "Fetched posts: ${posts.size}") // 🔴 Log fetched posts
+//
+//        _posts.postValue(posts) // ✅ Update UI
+//        _isLoading.postValue(false)
+//    }
+//}
+
+    fun fetchHomepagePosts() {
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+        viewModelScope.launch {
+            _isLoading.postValue(true)
+
+            val posts = postRepository.getFeedPosts(currentUserId) // ✅ Fetch posts
+            Log.d("HomepageViewModel", "Fetched posts count: ${posts.size}") // 🔴 Log post count
+
+            if (posts.isEmpty()) {
+                Log.e("HomepageViewModel", "No posts found for user feed!")
+            } else {
+                for (post in posts) {
+                    Log.d("HomepageViewModel", "Post: ${post.postId} - ${post.textContent}")
+                }
+            }
+
+            _posts.postValue(posts) // ✅ Update UI
+            _isLoading.postValue(false)
+        }
+    }
+
+
+//    fun fetchHomepagePosts() {   ORIGINAL ONE
 //        viewModelScope.launch {
 //            _isLoading.value = true
 //            try {
@@ -44,6 +100,7 @@ class HomepageViewModel @Inject constructor(private val postRepository: PostRepo
 //            }
 //        }
 //    }
+
 //    fun searchPosts(query: String) {
 //        viewModelScope.launch {
 //            val filteredPosts = postRepository.searchPostsByQuery(query) // Implement this in your repository

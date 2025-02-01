@@ -29,6 +29,9 @@ class PostViewModel @Inject constructor(
     private val _likesCount = MutableLiveData<Long>()
     val likesCount: LiveData<Long> get() = _likesCount
 
+    private val _feedPosts = MutableLiveData<List<PostModel>>()
+    val feedPosts: LiveData<List<PostModel>> get() = _feedPosts
+
     // Fetch posts for a user
     fun fetchUserPosts(userId: String) {
         viewModelScope.launch {
@@ -86,6 +89,12 @@ class PostViewModel @Inject constructor(
         }
     }
 
+    fun fetchFeedPosts(userId: String) {
+        viewModelScope.launch {
+            val posts = postRepository.getFeedPosts(userId)
+            _feedPosts.postValue(posts) // Update LiveData to reflect UI changes
+        }
+    }
 
 }
 

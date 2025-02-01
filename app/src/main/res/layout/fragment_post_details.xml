@@ -95,8 +95,9 @@
                     android:id="@+id/likesCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{@string/likes_label(post.likesCount)}"
+                    android:text='@{String.valueOf(post.likesCount) + " Likes"}'
                     android:layout_marginStart="8dp"/>
+                <!--                    android:text="@{@string/likes_label(post.likesCount)}"-->
 
                 <!-- Comments Count -->
                 <TextView

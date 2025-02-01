@@ -9,4 +9,5 @@ data class UserModel(
     val bio:String?=null,
     val followersCount:Int=0,
     val followingCount:Int=0,
+
 )

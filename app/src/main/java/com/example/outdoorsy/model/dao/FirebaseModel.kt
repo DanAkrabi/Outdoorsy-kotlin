@@ -1,23 +1,13 @@
 
 package com.example.outdoorsy.model.dao
 
-import android.graphics.Bitmap
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
-import com.example.outdoorsy.viewmodel.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.firestoreSettings
-import com.google.firebase.firestore.memoryCacheSettings
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.tasks.await
-import java.io.ByteArrayOutputStream
 import java.util.UUID
 import javax.inject.Inject
 
@@ -147,23 +137,7 @@ class FirebaseModel @Inject constructor(
         }
     }
 
-    // Get comments for a post
 
-//    suspend fun addCommentToPost(postId: String, comment: CommentModel) {
-//        try {
-//            val commentRef = firestore.collection("posts")
-//                .document(postId)
-//                .collection("comments")
-//                .document()
-//
-//            commentRef.set(comment).await()
-//
-//            // Atomically increment the comments count for the post
-//            incrementCommentsCount(postId)
-//        } catch (e: Exception) {
-//            Log.e("FirestoreError", "Error in addCommentToPost: ${e.message}")
-//        }
-//    }
 suspend fun addCommentToPost(postId: String, comment: CommentModel): Int {
     return try {
         val postRef = firestore.collection("posts").document(postId)
@@ -443,6 +417,52 @@ suspend fun getCommentsForPost(postId: String): List<CommentModel> {
             0L // Return 0 if an error occurs
         }
     }
+
+
+
+    suspend fun getFeedPosts(userId: String): List<PostModel> {
+        return try {
+            val followingIds = firestore.collection("users")
+                .document(userId)
+                .collection("following")
+                .get()
+                .await()
+                .documents.mapNotNull { it.id }
+
+            Log.d("FirebaseModel", "User follows: $followingIds")
+
+            if (followingIds.isEmpty()) {
+                Log.d("FirebaseModel", "User is not following anyone.")
+                return emptyList()
+            }
+
+            // Create a compound query to fetch posts from all followed users
+            val query = firestore.collection("posts")
+                .whereIn("userId", followingIds) // Use whereIn to query across multiple users
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .limit(10) // Limit to the newest 10 posts
+
+            val querySnapshot = query.get().await()
+
+            val posts = querySnapshot.documents.mapNotNull { document ->
+                document.toObject(PostModel::class.java)?.copy(postId = document.id)
+            }
+
+            Log.d("FirebaseModel", "Total Feed posts: ${posts.size}")
+            return posts
+        } catch (e: FirebaseFirestoreException) {
+            Log.e("FirestoreError", "Firestore error: ${e.message}", e)
+            emptyList()
+        } catch (e: Exception) {
+            Log.e("FirestoreError", "Unexpected error: ${e.message}", e)
+            emptyList()
+        }
+    }
+
+
+
+
+
 
 }
 
