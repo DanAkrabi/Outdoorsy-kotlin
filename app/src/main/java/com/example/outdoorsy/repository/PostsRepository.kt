@@ -18,9 +18,6 @@ class PostRepository @Inject constructor(
        return firebaseModel.getUserPosts(userId)
     }
 
-    fun getPostLikesCount(postId: String, callback: (Long) -> Unit) {
-        firebaseModel.getPostLikesCount(postId, callback)
-    }
 
 
     // Fetch a single post by ID
@@ -43,13 +40,33 @@ class PostRepository @Inject constructor(
     }
 
     // Toggle like on a post (increment or decrement like count)
-    suspend fun toggleLike(postId: String, userId: String): Long {
-        return firebaseModel.toggleLike(postId, userId)
+//    suspend fun toggleLike(postId: String, userId: String): Long {
+//        return firebaseModel.toggleLike(postId, userId)
+//    }
+    fun fetchPostLikesCount(postId: String, callback: (Long) -> Unit) {
+        firebaseModel.fetchPostLikesCount(postId, callback)
+    }
+
+    // Observe likes count changes
+    fun observePostLikesCount(postId: String, callback: (Long) -> Unit) {
+        firebaseModel.observePostLikesCount(postId, callback)
+    }
+    fun getPostLikesCount(postId: String, callback: (Long) -> Unit) {
+        firebaseModel.getPostLikesCount(postId, callback)
     }
 
 
     suspend fun getFeedPosts(userId: String): List<PostModel> {
         return firebaseModel.getFeedPosts(userId)
+    }
+
+    suspend fun toggleLike(postId: String, userId: String): Boolean {
+        return firebaseModel.toggleLike(postId, userId)
+    }
+
+    // Check if the post is already liked by the user
+    suspend fun isLikedByUser(postId: String, userId: String): Boolean {
+        return firebaseModel.checkIfLiked(postId, userId)
     }
 }
 

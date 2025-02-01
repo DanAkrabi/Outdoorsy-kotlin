@@ -10,6 +10,7 @@ import com.google.firebase.firestore.Query
 import kotlinx.coroutines.tasks.await
 import java.util.UUID
 import javax.inject.Inject
+import kotlin.math.max
 
 class FirebaseModel @Inject constructor(
     private val firestore: FirebaseFirestore,
@@ -392,33 +393,6 @@ suspend fun getCommentsForPost(postId: String): List<CommentModel> {
             }
     }
 
-    suspend fun toggleLike(postId: String, userId: String): Long {
-        return try {
-            val postRef = firestore.collection("posts").document(postId)
-
-            firestore.runTransaction { transaction ->
-                val postSnapshot = transaction.get(postRef)
-
-                val likesCount = postSnapshot.getLong("likesCount") ?: 0
-                val likedBy = postSnapshot.get("likedBy") as? MutableList<String> ?: mutableListOf()
-
-                if (likedBy.contains(userId)) {
-                    likedBy.remove(userId)
-                    transaction.update(postRef, mapOf("likedBy" to likedBy, "likesCount" to FieldValue.increment(-1)))
-                } else {
-                    likedBy.add(userId)
-                    transaction.update(postRef, mapOf("likedBy" to likedBy, "likesCount" to FieldValue.increment(1)))
-                }
-
-                likedBy.size.toLong()
-            }.await()
-        } catch (e: Exception) {
-            Log.e("FirestoreError", "Error toggling like: ${e.message}")
-            0L // Return 0 if an error occurs
-        }
-    }
-
-
 
     suspend fun getFeedPosts(userId: String): List<PostModel> {
         return try {
@@ -460,9 +434,132 @@ suspend fun getCommentsForPost(postId: String): List<CommentModel> {
     }
 
 
+    fun fetchPostLikesCount(postId: String, callback: (Long) -> Unit) {
+        val postRef = firestore.collection("posts").document(postId)
+        postRef.get().addOnSuccessListener { documentSnapshot ->
+            val likesCount = documentSnapshot.getLong("likesCount") ?: 0
+            callback(likesCount)
+        }.addOnFailureListener {
+            callback(0)
+        }
+    }
+
+    // Observe likes count changes in real-time
+    fun observePostLikesCount(postId: String, callback: (Long) -> Unit) {
+        val postRef = firestore.collection("posts").document(postId)
+        postRef.addSnapshotListener { snapshot, e ->
+            if (e != null) {
+                Log.w("FirebaseModel", "Listen failed.", e)
+                return@addSnapshotListener
+            }
+            if (snapshot != null && snapshot.exists()) {
+                val likesCount = snapshot.getLong("likesCount") ?: 0
+                callback(likesCount)
+            } else {
+                Log.e("FirebaseModel", "Current data: null")
+                callback(0)
+            }
+        }
+    }
+
+    suspend fun addLike(postId: String, userId: String) {
+        val postRef = firestore.collection("posts").document(postId)
+        val userLikeRef = postRef.collection("likes").document(userId)
+
+        try {
+            firestore.runTransaction { transaction ->
+                val snapshot = transaction.get(userLikeRef)
+                if (!snapshot.exists()) {
+                    transaction.set(userLikeRef, mapOf("timestamp" to FieldValue.serverTimestamp()))
+                    transaction.update(postRef, "likesCount", FieldValue.increment(1))
+                }
+            }.await()
+        } catch (e: Exception) {
+            Log.e("FirebaseModel", "Error adding like: ${e.message}")
+        }
+    }
+    suspend fun removeLike(postId: String, userId: String) {
+        val postRef = firestore.collection("posts").document(postId)
+        val userLikeRef = postRef.collection("likes").document(userId)
+
+        try {
+            firestore.runTransaction { transaction ->
+                val snapshot = transaction.get(userLikeRef)
+                if (snapshot.exists()) {
+                    transaction.delete(userLikeRef)
+                    transaction.update(postRef, "likesCount", FieldValue.increment(-1))
+                }
+            }.await()
+        } catch (e: Exception) {
+            Log.e("FirebaseModel", "Error removing like: ${e.message}")
+        }
+    }
 
 
+//
 
+
+//    suspend fun toggleLike(postId: String, userId: String, callback: (Boolean) -> Unit) {
+//        val postRef = firestore.collection("posts").document(postId)
+//        val likeRef = postRef.collection("likes").document(userId)
+//
+//        firestore.runTransaction { transaction ->
+//            val postSnapshot = transaction.get(postRef)
+//            val likeSnapshot = transaction.get(likeRef)
+//            var liked = false
+//
+//            if (likeSnapshot.exists()) {
+//                // If the like document exists, the user is unliking the post
+//                transaction.delete(likeRef)
+//                transaction.update(postRef, "likesCount", FieldValue.increment(-1))
+//            } else {
+//                // If the like document does not exist, the user is liking the post
+//                transaction.set(likeRef, hashMapOf("timestamp" to FieldValue.serverTimestamp()))
+//                transaction.update(postRef, "likesCount", FieldValue.increment(1))
+//                liked = true
+//            }
+//            // The operation is atomic; this block either succeeds fully or fails fully.
+//            liked // Return the status of the operation to indicate like or unlike
+//        }.addOnSuccessListener {
+//            callback(true) // Operation succeeded, callback with the result
+//        }.addOnFailureListener { e ->
+//            Log.e("FirestoreError", "Error toggling like", e)
+//            callback(false) // Operation failed, callback with the result
+//        }
+//    }
+suspend fun toggleLike(postId: String, userId: String): Boolean {
+    val postRef = firestore.collection("posts").document(postId)
+    val likeRef = postRef.collection("likes").document(userId)
+
+    return firestore.runTransaction { transaction ->
+        val likeSnapshot = transaction.get(likeRef)
+        val postSnapshot = transaction.get(postRef)
+        val currentLikes = postSnapshot.getLong("likesCount") ?: 0
+
+        if (likeSnapshot.exists()) {
+            // User is unliking the post
+            transaction.delete(likeRef)
+            transaction.update(postRef, "likesCount", FieldValue.increment(-1))
+            false // Return false indicating the post was unliked
+        } else {
+            // User is liking the post
+            transaction.set(likeRef, hashMapOf("timestamp" to FieldValue.serverTimestamp()))
+            transaction.update(postRef, "likesCount", FieldValue.increment(1))
+            true // Return true indicating the post was liked
+        }
+    }.await()
+}
+    suspend fun checkIfLiked(postId: String, userId: String): Boolean {
+        val likeRef = postsCollection.document(postId).collection("likes").document(userId)
+        return try {
+            val snapshot = likeRef.get().await()
+            snapshot.exists()
+        } catch (e: Exception) {
+            Log.e("FirebaseError", "Error checking like status: ${e.message}")
+            false
+        }
+//
+    }
 
 }
 

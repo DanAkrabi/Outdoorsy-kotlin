@@ -11,6 +11,7 @@ import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.text
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 //import androidx.glance.visibility
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -47,9 +48,12 @@ class PostDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        postViewModel.fetchPostDetails(args.post.postId)
+        postViewModel.fetchPostDetails(
+            args.post.postId,
 
-        setupObservers()
+        )
+
+        setupObservers(args.post)
         commentsViewModel.fetchComments(args.post.postId)
         setupInteractionListeners(args.post)
         userViewModel.getUserDetails(args.post.userId) { fullname, profileImg ->
@@ -59,7 +63,7 @@ class PostDetailsFragment : Fragment() {
                 .into(binding.imageUserProfile)
         }
         setupViews(args.post)
-
+        postViewModel.checkLikeStatus(args.post.postId, args.post.userId)
 
     }
 
@@ -87,9 +91,14 @@ class PostDetailsFragment : Fragment() {
 
 
 
-    private fun setupObservers() {
+    private fun setupObservers(post: PostModel) {
 
+        postViewModel.isLikedByUser.observe(viewLifecycleOwner) { isLiked ->
+            binding.buttonLike.setImageResource(
+                if (isLiked) R.drawable.ic_like else R.drawable.ic_heart_outline
+            )
 
+        }
         commentsViewModel.comments.observe(viewLifecycleOwner) { comments ->
             Log.d("FragmentDebug", "Received ${comments.size} comments in Fragment")
 
@@ -97,7 +106,18 @@ class PostDetailsFragment : Fragment() {
                 binding.recyclerViewComments.layoutManager = LinearLayoutManager(requireContext())
             }
 
-            binding.recyclerViewComments.adapter = CommentsAdapter(comments, userViewModel)
+//            binding.recyclerViewComments.adapter = CommentsAdapter(comments, userViewModel)
+            binding.recyclerViewComments.adapter = CommentsAdapter(comments, userViewModel) { userId ->
+                val action = PostDetailsFragmentDirections.actionPostDetailsFragmentToUserProfileFragment(userId)
+                findNavController().navigate(action)
+            }
+            binding.imageUserProfile.setOnClickListener {
+                val action = PostDetailsFragmentDirections.actionPostDetailsFragmentToUserProfileFragment(post.userId)
+                findNavController().navigate(action)
+            }
+
+
+
         }
         // ✅ Observe post updates to get the latest commentsCount --not to delete--
         postViewModel.post.observe(viewLifecycleOwner) { updatedPost ->
@@ -136,10 +156,10 @@ class PostDetailsFragment : Fragment() {
             }
 
         }
+
         binding.buttonLike.setOnClickListener {
             val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return@setOnClickListener
-
-            postViewModel.toggleLike(post.postId, currentUserId)
+            postViewModel.toggleLike(post.postId)
         }
     }
 

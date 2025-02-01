@@ -6,6 +6,9 @@
         <variable
             name="post"
             type="com.example.outdoorsy.model.dao.PostModel"/>
+        <variable
+            name="viewModel"
+            type="com.example.outdoorsy.viewmodel.PostViewModel"/>
     </data>
 
     <androidx.core.widget.NestedScrollView
@@ -87,8 +90,9 @@
                     android:layout_height="48dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:scaleType="centerInside"
-                    android:src="@drawable/ic_heart_selector"
+                    android:src="@{viewModel.isLikedByUser ? @drawable/ic_like : @drawable/ic_heart_outline}"
                     android:contentDescription="Like Button"/>
+                <!--                    android:src="@drawable/ic_heart_selector"-->
 
                 <!-- Likes Count -->
                 <TextView
@@ -96,6 +100,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text='@{String.valueOf(post.likesCount) + " Likes"}'
+
                     android:layout_marginStart="8dp"/>
                 <!--                    android:text="@{@string/likes_label(post.likesCount)}"-->
 

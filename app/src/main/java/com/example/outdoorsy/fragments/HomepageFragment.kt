@@ -66,16 +66,7 @@ class HomepageFragment : Fragment(R.layout.fragment_homepage) {
         }
 
         viewModel.fetchHomepagePosts()
-        // Observe user data
-//        userViewModel.user.observe(viewLifecycleOwner) { user ->
-//            if (user != null) {
-//                Log.d("HomepageFragment", "User loaded: ${user.fullname}")
-//                binding.textWelcome.text = "Welcome, ${user.fullname}"
-//            } else {
-//                Log.d("HomepageFragment", "User is null or failed to load")
-//                binding.textWelcome.text = "Welcome to Outdoorsy!"
-//            }
-//        }
+
     }
 
             private fun navigateToPostDetails(post: PostModel) {

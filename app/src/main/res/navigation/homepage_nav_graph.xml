@@ -69,6 +69,14 @@
         <argument
             android:name="post"
             app:argType="com.example.outdoorsy.model.dao.PostModel" />
+        <action
+            android:id="@+id/action_postDetailsFragment_to_userProfileFragment"
+            app:destination="@id/userProfileFragment">
+            <argument
+                android:name="userId"
+                app:argType="string" />
+        </action>
+
     </fragment>
 
 
