@@ -1,7 +1,7 @@
 package com.example.outdoorsy.repository
 
-import com.example.outdoorsy.model.dao.FirebaseModel
-import com.example.outdoorsy.model.dao.UserModel
+import com.example.outdoorsy.model.FirebaseModel
+import com.example.outdoorsy.model.UserModel
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject

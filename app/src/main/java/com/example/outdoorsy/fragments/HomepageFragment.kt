@@ -11,9 +11,10 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.outdoorsy.R
+import com.example.outdoorsy.adapters.FeedPostsAdapter
 import com.example.outdoorsy.adapters.PostsAdapter
 import com.example.outdoorsy.databinding.FragmentHomepageBinding
-import com.example.outdoorsy.model.dao.PostModel
+import com.example.outdoorsy.model.PostModel
 import com.example.outdoorsy.viewmodel.HomepageViewModel
 import com.example.outdoorsy.viewmodel.PostViewModel
 import com.example.outdoorsy.viewmodel.UserViewModel
@@ -43,23 +44,26 @@ class HomepageFragment : Fragment(R.layout.fragment_homepage) {
         auth = FirebaseAuth.getInstance()
 
         binding.recyclerViewDestinations.visibility = View.VISIBLE
-
+        val feedPostsAdapter = FeedPostsAdapter(
+            requireContext(),
+            userViewModel,
+            onPostClicked = { post -> navigateToPostDetails(post) },
+            onUserProfileClick = { userId -> navigateToUserProfile(userId) }
+        )
         // Initialize PostsAdapter with the click listener
         postsAdapter = PostsAdapter(requireContext()) { post ->
             navigateToPostDetails(post)
         }
-
-//        binding.recyclerViewDestinations.adapter = postsAdapter
         binding.recyclerViewDestinations.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            adapter = postsAdapter
+            adapter = feedPostsAdapter
         }
-        // Observe and submit posts to the adapter
 
         viewModel.posts.observe(viewLifecycleOwner) { posts ->
             if (posts != null && posts.isNotEmpty()) {
                 Log.d("HomepageFragment", "Posts loaded: ${posts.size}")
-                postsAdapter.submitList(posts)
+//                postsAdapter.submitList(posts)
+                feedPostsAdapter.submitList(posts)
             } else {
                 Log.e("HomepageFragment", "Error loading posts: No posts found")
             }
@@ -73,6 +77,13 @@ class HomepageFragment : Fragment(R.layout.fragment_homepage) {
         val action = HomepageFragmentDirections.actionHomepageFragmentToPostDetailsFragment(post)
         findNavController().navigate(action)
     }
+
+    private fun navigateToUserProfile(userId: String) {
+        val action = HomepageFragmentDirections
+            .actionHomepageFragmentToUserProfileFragment(userId)
+        findNavController().navigate(action)
+    }
+
 
 
     override fun onDestroyView() {

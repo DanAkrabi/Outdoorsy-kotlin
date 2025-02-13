@@ -8,7 +8,8 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.outdoorsy.fragments.LoginFragment"
-        android:label="Login">
+        android:label="Login"
+        tools:layout="@layout/fragment_login">
         <!-- Navigate to RegisterFragment -->
         <action
             android:id="@+id/action_loginFragment_to_registerFragment"
@@ -19,7 +20,8 @@
     <fragment
         android:id="@+id/registerFragment"
         android:name="com.example.outdoorsy.fragments.RegisterFragment"
-        android:label="Register">
+        android:label="Register"
+        tools:layout="@layout/fragment_register">
         <!-- Navigate back to LoginFragment -->
         <action
             android:id="@+id/action_registerFragment_to_loginFragment"
@@ -34,7 +36,7 @@
         android:label="Post Details">
         <argument
             android:name="post"
-            app:argType="com.example.outdoorsy.model.dao.PostModel" />
+            app:argType="com.example.outdoorsy.model.PostModel" />
     </fragment>
 
 </navigation>

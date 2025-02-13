@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.compose.ui.semantics.text
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -41,17 +43,13 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             adapter = searchAdapter
         }
 
-        binding.SearchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                query?.let { searchViewModel.searchUsers(it) }
-                return true
-            }
+        binding.searchView.setupWithSearchBar(binding.searchBar)
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                newText?.let { searchViewModel.searchUsers(it) }
-                return true
-            }
-        })
+        // Set up the listener for the SearchView's text changes
+        binding.searchView.editText.doOnTextChanged { text, _, _, _ ->
+            searchViewModel.searchUsers(text.toString())
+        }
+
 
         searchViewModel.searchResults.observe(viewLifecycleOwner) { users ->
             searchAdapter.submitList(users)

@@ -17,6 +17,13 @@
         <action
             android:id="@+id/action_navigation_home_to_navigation_search"
             app:destination="@id/navigation_search" />
+        <action
+            android:id="@+id/action_homepageFragment_to_userProfileFragment"
+            app:destination="@id/userProfileFragment">
+            <argument
+                android:name="userId"
+                app:argType="string" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/navigation_search"
@@ -51,7 +58,16 @@
     <fragment
         android:id="@+id/navigation_camera"
         android:name="com.example.outdoorsy.fragments.CameraFragment"
-        android:label="Camera" />
+        android:label="Camera">
+        <action
+            android:id="@+id/action_cameraFragment_to_profileFragment"
+            app:destination="@id/navigation_profile">
+            <argument
+                android:name="userId"
+                app:argType="string" />
+        </action>
+    </fragment>
+
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.example.outdoorsy.fragments.ProfileFragment"
@@ -65,10 +81,11 @@
     <fragment
         android:id="@+id/postDetailsFragment"
         android:name="com.example.outdoorsy.fragments.PostDetailsFragment"
-        android:label="Post Details">
+        android:label="Post Details"
+        tools:layout="@layout/fragment_post_details">
         <argument
             android:name="post"
-            app:argType="com.example.outdoorsy.model.dao.PostModel" />
+            app:argType="com.example.outdoorsy.model.PostModel" />
         <action
             android:id="@+id/action_postDetailsFragment_to_userProfileFragment"
             app:destination="@id/userProfileFragment">
@@ -76,9 +93,28 @@
                 android:name="userId"
                 app:argType="string" />
         </action>
-
+        <action
+            android:id="@+id/action_postDetailsFragment_to_editPostFragment"
+            app:destination="@id/editPostFragment" />
     </fragment>
 
+    <fragment
+        android:id="@+id/editPostFragment"
+        android:name="com.example.outdoorsy.fragments.EditPostFragment"
+        android:label="EditPostFragment"
+        tools:layout="@layout/fragment_edit_post">
+        <argument
+            android:name="postId"
+            app:argType="string" />
+        <argument
+            android:name="textContent"
+            app:argType="string" />
+        <argument
+            android:name="imageUrl"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
 
 
 </navigation>

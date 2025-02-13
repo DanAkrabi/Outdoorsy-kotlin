@@ -1,11 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- Primary Colors (Greens) -->
+    <color name="green_primary">#4CAF50</color> <!-- A vibrant green -->
+    <color name="green_primary_dark">#388E3C</color> <!-- A darker shade of green -->
+    <color name="green_primary_light">#C8E6C9</color> <!-- A lighter shade of green -->
 
+    <!-- Secondary Colors (Browns/Oranges) -->
+    <color name="brown_secondary">#795548</color> <!-- A warm brown -->
+    <color name="brown_secondary_dark">#5D4037</color> <!-- A darker shade of brown -->
+    <color name="orange_secondary_light">#FFCC80</color> <!-- A light orange -->
+
+    <!-- Accent Color (Teal) -->
+    <color name="teal_accent">#009688</color> <!-- A teal accent color -->
+    <color name="teal_accent_dark">#00796B</color> <!-- A darker shade of teal -->
+
+    <!-- Neutral Colors -->
+    <color name="gray_light">#EEEEEE</color> <!-- A very light gray -->
+    <color name="gray_medium">#9E9E9E</color> <!-- A medium gray -->
+    <color name="gray_dark">#424242</color> <!-- A dark gray -->
+
+    <!-- Material Design Colors -->
+    <color name="purple_200">#BB86FC</color>
+    <color name="purple_500">#6200EE</color>
+    <color name="purple_700">#3700B3</color>
+    <color name="teal_200">#03DAC5</color>
+    <color name="teal_700">#018786</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="teal_400">#008080</color> <!-- Dark Teal -->
+
+
+    <color name="dark_green_primary">#2E7D32</color> <!-- Deep forest green -->
+    <color name="dark_green_primary_dark">#1B5E20</color> <!-- Even darker green -->
+    <color name="dark_green_primary_light">#43A047</color> <!-- A lighter shade of deep green -->
+
+    <!-- Dark Secondary Colors (Dark Browns/Oranges) -->
+    <color name="dark_brown_secondary">#5D4037</color> <!-- Dark, earthy brown -->
+    <color name="dark_brown_secondary_dark">#3E2723</color> <!-- Very dark brown -->
+    <color name="dark_orange_secondary_light">#FFB74D</color> <!-- A muted orange -->
+
+    <!-- Dark Accent Color (Deep Teal) -->
+    <color name="dark_teal_accent">#00796B</color> <!-- Deep teal -->
+    <color name="dark_teal_accent_dark">#004D40</color> <!-- Very deep teal -->
+
+    <!-- Dark Neutral Colors -->
+    <color name="dark_black">#121212</color> <!-- Dark gray, not pure black -->
+    <color name="dark_gray_light">#424242</color> <!-- Lighter dark gray -->
+    <color name="dark_gray_medium">#616161</color> <!-- Medium dark gray -->
+    <color name="dark_gray_dark">#212121</color> <!-- Very dark gray -->
+    <color name="dark_white">#E0E0E0</color> <!-- Off-white for text -->
+
+    <!-- Material Design Colors (Dark Theme) -->
+    <color name="colorPrimary">@color/dark_green_primary</color>
+    <color name="colorPrimaryVariant">@color/dark_green_primary_dark</color>
+    <color name="colorOnPrimary">@color/dark_white</color>
+    <color name="colorSecondary">@color/dark_brown_secondary</color>
+    <color name="colorSecondaryVariant">@color/dark_brown_secondary_dark</color>
+    <color name="colorOnSecondary">@color/dark_white</color>
+    <color name="colorBackground">@color/dark_black</color>
+    <color name="colorSurface">@color/dark_black</color>
+    <color name="colorOnSurface">@color/dark_white</color>
+    <color name="colorPrimaryContainer">@color/dark_green_primary_light</color>
+    <color name="ripple_material_light">#40FFFFFF</color> <!-- Slightly transparent white -->
 </resources>
+

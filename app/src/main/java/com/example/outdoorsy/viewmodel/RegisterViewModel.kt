@@ -4,19 +4,25 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.outdoorsy.model.dao.FirebaseModel
-import com.example.outdoorsy.model.dao.UserModel
+import com.example.outdoorsy.model.FirebaseModel
+import com.example.outdoorsy.model.CloudinaryModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.util.*
+import javax.inject.Inject
 
-class RegisterViewModel : ViewModel() {
-    private val firebaseAuth = FirebaseAuth.getInstance()
-    private val firestore = Firebase.firestore
-    private val firebaseModel = FirebaseModel(firestore,firebaseAuth)
+@HiltViewModel
+class RegisterViewModel @Inject constructor(
+    private val firebaseModel: FirebaseModel,
+//    private val cloudinaryModel: CloudinaryModel
+) : ViewModel() {
+//    private val firebaseAuth = FirebaseAuth.getInstance()
+//    private val firestore = Firebase.firestore
+//    private val firebaseModel = FirebaseModel(firestore,firebaseAuth)
 
     private val _registrationState = MutableLiveData<RegistrationState>(RegistrationState.Empty)
     val registrationState: LiveData<RegistrationState> get() = _registrationState
@@ -41,17 +47,20 @@ class RegisterViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 // Register the user using Firebase Authentication
-                val authResult = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
+//                val authResult = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
+
+                val authResult = firebaseModel.registerUser(email,password,fullname)
+
 
                 // Save additional user information to Firestore
-                val userId = authResult.user?.uid ?: UUID.randomUUID().toString()
-                val user = UserModel(
-                    id = userId,
-                    email = email,
-                    fullname = fullname,
-                    password = password // Don't save plain-text passwords in production apps
-                )
-                firebaseModel.saveUser(user)
+//                val userId = authResult.user?.uid ?: UUID.randomUUID().toString()
+//                val user = UserModel(
+//                    id = userId,
+//                    email = email,
+//                    fullname = fullname,
+//                    password = password // Don't save plain-text passwords in production apps
+//                )
+//                firebaseModel.saveUser(user)
 
                 _registrationState.value = RegistrationState.Success
             } catch (e: Exception) {
@@ -67,6 +76,3 @@ class RegisterViewModel : ViewModel() {
         data class Error(val message: String) : RegistrationState()
     }
 }
-
-
-

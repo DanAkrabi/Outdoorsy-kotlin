@@ -1,10 +1,12 @@
 package com.example.outdoorsy.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.compose.ui.semantics.text
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -12,10 +14,11 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
+import com.example.outdoorsy.MainActivity
 import com.example.outdoorsy.R
 import com.example.outdoorsy.adapters.PostsAdapter
 import com.example.outdoorsy.databinding.FragmentProfileBinding
-import com.example.outdoorsy.model.dao.PostModel
+import com.example.outdoorsy.model.PostModel
 import com.example.outdoorsy.viewmodel.ProfileViewModel
 import com.example.outdoorsy.viewmodel.UserViewModel
 import com.example.outdoorsy.viewmodel.PostViewModel
@@ -41,7 +44,21 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
         observeViewModels()
+
+        val logoutButton = view.findViewById<Button>(R.id.logoutButton)
+        logoutButton.setOnClickListener {
+            FirebaseAuth.getInstance().signOut() // Sign out the user
+
+            // Navigate back to Login screen
+            val intent = Intent(requireContext(), MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+        }
+
+
     }
+
+
 
     private fun setupRecyclerView() {
         postsAdapter = PostsAdapter(requireContext()) { post ->
@@ -67,7 +84,7 @@ class ProfileFragment : Fragment() {
             }
         }
 
-       profileViewModel.posts.observe(viewLifecycleOwner) { posts ->
+        profileViewModel.posts.observe(viewLifecycleOwner) { posts ->
             postsAdapter.submitList(posts)
         }
 
@@ -90,7 +107,3 @@ class ProfileFragment : Fragment() {
         _binding = null
     }
 }
-
-
-
-

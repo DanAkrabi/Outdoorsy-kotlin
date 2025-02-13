@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.outdoorsy.R
 import com.example.outdoorsy.databinding.ItemPostBinding
-import com.example.outdoorsy.model.dao.PostModel
+import com.example.outdoorsy.model.PostModel
 
 class PostsAdapter(
     private val context: Context,

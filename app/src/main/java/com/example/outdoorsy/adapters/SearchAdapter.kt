@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.outdoorsy.R
 import com.example.outdoorsy.databinding.ItemSearchResultBinding
-import com.example.outdoorsy.model.dao.UserModel
+import com.example.outdoorsy.model.UserModel
 
 class SearchAdapter(private val onUserClick: (UserModel) -> Unit) :
     RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {

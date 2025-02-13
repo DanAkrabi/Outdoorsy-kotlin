@@ -5,8 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.outdoorsy.model.dao.FirebaseModel
-import com.example.outdoorsy.model.dao.UserModel
+import com.example.outdoorsy.model.UserModel
 import com.example.outdoorsy.repository.LoginRepository
 import com.example.outdoorsy.repository.UserRepository
 import com.google.firebase.auth.FirebaseAuth

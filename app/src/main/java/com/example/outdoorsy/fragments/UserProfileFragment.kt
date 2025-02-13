@@ -15,7 +15,7 @@ import com.bumptech.glide.Glide
 import com.example.outdoorsy.R
 import com.example.outdoorsy.adapters.PostsAdapter
 import com.example.outdoorsy.databinding.FragmentUserProfileBinding
-import com.example.outdoorsy.model.dao.PostModel
+import com.example.outdoorsy.model.PostModel
 import com.example.outdoorsy.viewmodel.PostViewModel
 import com.example.outdoorsy.viewmodel.UserProfileViewModel
 import com.example.outdoorsy.viewmodel.UserViewModel

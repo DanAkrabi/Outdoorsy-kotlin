@@ -9,7 +9,9 @@ import androidx.navigation.fragment.findNavController
 import com.example.outdoorsy.R
 import com.example.outdoorsy.databinding.FragmentRegisterBinding
 import com.example.outdoorsy.viewmodel.RegisterViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class RegisterFragment : Fragment(R.layout.fragment_register) {
     private var _binding: FragmentRegisterBinding? = null
     private val binding get() = _binding!!
@@ -18,7 +20,9 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentRegisterBinding.bind(view)
-
+        binding.registerCancelButton.setOnClickListener {
+            findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+        }
         binding.registerButton.setOnClickListener {
             val email = binding.registerEmail.text.toString()
             val password = binding.registerPassword.text.toString()

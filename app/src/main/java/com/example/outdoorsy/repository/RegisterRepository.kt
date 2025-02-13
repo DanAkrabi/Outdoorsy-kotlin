@@ -1,7 +1,6 @@
 package com.example.outdoorsy.repository
 
-import com.example.outdoorsy.model.dao.FirebaseModel
-import com.example.outdoorsy.model.dao.UserModel
+import com.example.outdoorsy.model.FirebaseModel
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.tasks.await
 import java.util.UUID

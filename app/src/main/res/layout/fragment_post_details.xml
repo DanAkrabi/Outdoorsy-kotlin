@@ -1,89 +1,156 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <variable
             name="post"
-            type="com.example.outdoorsy.model.dao.PostModel"/>
+            type="com.example.outdoorsy.model.PostModel" />
         <variable
             name="viewModel"
-            type="com.example.outdoorsy.viewmodel.PostViewModel"/>
+            type="com.example.outdoorsy.viewmodel.PostViewModel" />
+<!--            <import type="com.example.outdoorsy.util.BindingAdaptersKt" />-->
     </data>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
-        android:padding="16dp">
+        android:background="?attr/colorSurface">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="16dp">
+            android:padding="16dp">
 
-            <!-- User Info Row -->
-            <LinearLayout
+            <!-- 🟢 User Info Card -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingBottom="8dp">
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:strokeColor="?attr/colorOutline"
+                app:strokeWidth="1dp">
+                <!-- Buttons for editing and deleting the post -->
+                <LinearLayout
+                    android:id="@+id/editDeleteContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="end"
+                    android:orientation="horizontal"
+                    android:visibility="gone"> <!-- Initially hidden -->
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/buttonEditPost"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Edit"
+                        app:cornerRadius="24dp"
+                        android:layout_marginEnd="8dp"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/buttonDeletePost"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Delete"
+                        app:cornerRadius="24dp"
+                        />
+<!--                    android:backgroundTint="@color/error"-->
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="12dp">
+
+                    <!-- Profile Image -->
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/imageUserProfile"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginEnd="12dp"
+                        android:scaleType="centerCrop"
+                        app:shapeAppearanceOverlay="@style/ShapeAppearance.App.CircleImageView"
+                        app:srcCompat="@drawable/ic_profile_placeholder"
+                        tools:src="@drawable/ic_profile_placeholder" />
+
+                    <!-- Username and Timestamp -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/textUsername"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{post.fullname}"
+                            android:textAppearance="?attr/textAppearanceTitleMedium"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textStyle="bold"
+                            tools:text="User Name" />
+
+
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 🟢 Post Image -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:strokeColor="?attr/colorOutline"
+                app:strokeWidth="1dp">
 
                 <ImageView
-                    android:id="@+id/imageUserProfile"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:id="@+id/imagePost"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:contentDescription="Post Image"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/ic_profile_placeholder"
-                    android:background="@drawable/circle_background"/>
+                    tools:src="@drawable/ic_profile_placeholder" />
+            </com.google.android.material.card.MaterialCardView>
 
-                <TextView
-                    android:id="@+id/textUsername"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{post.fullname}"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:layout_marginStart="8dp"/>
 
-                <TextView
-                    android:id="@+id/textTimestamp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{post.timestamp.toString()}"
-                    android:textSize="12sp"
-                    android:textColor="@android:color/darker_gray"
-                    android:layout_marginStart="8dp"/>
-            </LinearLayout>
+            <TextView
+                android:id="@+id/textTimestamp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:text="@{post.timestamp.toString()}"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                tools:text="Timestamp" />
 
-            <!-- Post Image -->
-            <ImageView
-                android:id="@+id/imagePost"
-                android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:scaleType="centerCrop"
-                android:contentDescription="Post Image"/>
-
-            <!-- Post Caption -->
             <TextView
                 android:id="@+id/textCaption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{post.textContent}"
-                android:textSize="16sp"
-                android:paddingTop="8dp"/>
+                android:layout_marginTop="12dp"
+                android:text="@{post.textContent != null &amp;&amp; !post.textContent.isEmpty() ? post.textContent : `No description`}"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?attr/colorOnSurface"
+                tools:text="Post Caption" />
 
-            <!-- Like & Comment Row -->
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_marginTop="12dp"
                 android:gravity="center_vertical"
-                android:paddingVertical="8dp">
+                android:orientation="horizontal">
 
-                <!-- Like Button -->
+                <!-- ✅ Like Button -->
                 <ImageButton
                     android:id="@+id/buttonLike"
                     android:layout_width="48dp"
@@ -91,88 +158,105 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:scaleType="centerInside"
                     android:src="@{viewModel.isLikedByUser ? @drawable/ic_like : @drawable/ic_heart_outline}"
-                    android:contentDescription="Like Button"/>
-                <!--                    android:src="@drawable/ic_heart_selector"-->
+                    android:contentDescription="Like Button" />
 
-                <!-- Likes Count -->
+                <!-- ✅ Likes Count (Now Next to Like Button) -->
                 <TextView
                     android:id="@+id/likesCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text='@{String.valueOf(post.likesCount) + " Likes"}'
+                    android:layout_marginStart="8dp"
+                    android:text='@{String.valueOf(post.likesCount) +  `Likes`}'
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    tools:text="0 Likes" />
 
-                    android:layout_marginStart="8dp"/>
-                <!--                    android:text="@{@string/likes_label(post.likesCount)}"-->
-
-                <!-- Comments Count -->
+                <!-- ✅ Comments Count (Now Correctly Positioned) -->
                 <TextView
                     android:id="@+id/commentsCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{@string/comments_label(post.commentsCount)}"
-                    android:layout_marginStart="16dp"/>
+                    android:layout_marginStart="16dp"
+                    android:text="@{String.valueOf(post.commentsCount) +  `Comments`}"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                    tools:text="0 Comments" />
             </LinearLayout>
 
-            <!-- Toggle Comments Button -->
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonToggleComments"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Show Comments"
-                android:layout_marginTop="8dp"/>
+                android:layout_marginTop="12dp"
+                app:cornerRadius="24dp"/>
 
-            <!-- Comments Section -->
-            <LinearLayout
+            <!-- 🟢 Comments Section -->
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/commentsContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
+                android:layout_marginTop="12dp"
+                android:visibility="gone"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:strokeColor="?attr/colorOutline"
+                app:strokeWidth="1dp">
 
-                <TextView
-                    android:id="@+id/textCommentsTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Comments"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:paddingTop="8dp"/>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerViewComments"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"
-                    android:scrollbars="vertical"/>
-
-                <!-- Add Comment Section -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingTop="8dp">
+                    android:orientation="vertical"
+                    android:padding="12dp">
 
-                    <EditText
-                        android:id="@+id/editTextComment"
-                        android:layout_width="0dp"
+                    <!-- ✅ Comment Input Field Now Visible -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="Add a comment..."
-                        android:background="@android:drawable/edit_text"
-                        android:padding="8dp"/>
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
-                    <ImageButton
-                        android:id="@+id/buttonPostComment"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/ic_send"
-                        android:contentDescription="Post Comment"/>
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/commentInputLayout"
+                            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="Add a comment...">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/editTextComment"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="14sp"
+                                android:textColor="?attr/colorOnSurface" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <!-- ✅ Fixed Post Comment Button -->
+                        <ImageButton
+                            android:id="@+id/buttonPostComment"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_marginStart="8dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_send"
+                            android:contentDescription="Post Comment" />
+                    </LinearLayout>
+
+                    <!-- RecyclerView for Comments -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerViewComments"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"
+                        android:scrollbars="vertical"
+                        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
                 </LinearLayout>
-            </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </layout>
+

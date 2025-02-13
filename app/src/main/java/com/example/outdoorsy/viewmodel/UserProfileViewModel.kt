@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.outdoorsy.model.dao.UserModel
+import com.example.outdoorsy.model.UserModel
 import com.example.outdoorsy.repository.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,7 +29,7 @@ class UserProfileViewModel @Inject constructor(
 
     fun fetchUserProfile(userId: String) {
         viewModelScope.launch {
-            userRepository.getUserById(userId)?.let { user ->
+            userRepository.getUserById(userId)?.let { user:UserModel ->
                 _userProfile.postValue(user)
                 _followersCount.postValue(userRepository.getFollowersCount(userId))
                 _followingCount.postValue(userRepository.getFollowingCount(userId))

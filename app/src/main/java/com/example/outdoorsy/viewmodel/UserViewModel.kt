@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.outdoorsy.model.UserModel
 import kotlinx.coroutines.launch
-import com.example.outdoorsy.model.dao.UserModel
 import com.example.outdoorsy.repository.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -68,13 +68,24 @@ fun getUserDetails(userId: String, callback: (String?, String?) -> Unit) {
 }
 
     // Fetch user by ID and update LiveData
+//    fun fetchUser(userId: String) {
+//        viewModelScope.launch {
+//            userRepository.getUserById(userId)?.let {
+//                _user.postValue(it)
+//
+//                checkIfFollowing(userId)
+//            } ?: Log.e("UserViewModel", "Failed to fetch user")
+//        }
+//    }
     fun fetchUser(userId: String) {
         viewModelScope.launch {
-            userRepository.getUserById(userId)?.let {
-                _user.postValue(it)
-
+            val user = userRepository.getUserById(userId)
+            if (user != null) {
+                _user.postValue(user)
                 checkIfFollowing(userId)
-            } ?: Log.e("UserViewModel", "Failed to fetch user")
+            } else {
+                Log.e("UserViewModel", "Failed to fetch user")
+            }
         }
     }
 

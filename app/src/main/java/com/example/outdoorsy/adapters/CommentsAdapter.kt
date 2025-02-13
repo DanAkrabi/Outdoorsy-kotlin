@@ -1,6 +1,7 @@
 
 package com.example.outdoorsy.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.compose.ui.semantics.error
@@ -10,7 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.outdoorsy.R
 import com.example.outdoorsy.databinding.ItemCommentBinding
-import com.example.outdoorsy.model.dao.CommentModel
+import com.example.outdoorsy.model.CommentModel
+
 import com.example.outdoorsy.viewmodel.UserViewModel
 
 class CommentsAdapter(
@@ -18,6 +20,11 @@ class CommentsAdapter(
     private val userViewModel: UserViewModel,
     private val onUserProfileClick: (String) -> Unit // 🔥 Callback to navigate
 ) : RecyclerView.Adapter<CommentsAdapter.CommentViewHolder>() {
+    fun updateComments(newComments: List<CommentModel>) {
+        Log.d("Adapter Debug", "Updating adapter with ${newComments.size} comments") // ✅ Add this
+        comments = newComments
+        notifyDataSetChanged()  // Forces RecyclerView to refresh
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
         val binding = ItemCommentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -26,6 +33,7 @@ class CommentsAdapter(
 
     override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
         holder.bind(comments[position])
+        Log.d("AdapterDebug", "Binding comment: ${comments}")
     }
 
     override fun getItemCount(): Int = comments.size

@@ -1,13 +1,17 @@
 
-package com.example.outdoorsy.model.dao
+package com.example.outdoorsy.model
 
+import android.graphics.Bitmap
 import android.util.Log
+import com.cloudinary.Url
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
+import java.lang.Error
 import java.util.UUID
 import javax.inject.Inject
 import kotlin.math.max
@@ -15,6 +19,7 @@ import kotlin.math.max
 class FirebaseModel @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val firebaseAuth: FirebaseAuth,
+    private val cloudinaryModel: CloudinaryModel
 
 //    private val userViewModel: UserViewModel
 ) {
@@ -24,16 +29,26 @@ class FirebaseModel @Inject constructor(
     private val usersCollection = firestore.collection("users")
     private val postsCollection = firestore.collection("posts")
 
-//    private val storage = Firebase.storage
+    companion object {
+        // Tag for logging
+        private const val TAG = "FirebaseModel"
 
-//    init {
-//        val setting = firestoreSettings {
-//            setLocalCacheSettings(memoryCacheSettings {
-//
-//            })
-//        }
-//        database.firestoreSettings = setting
-//    }
+        // Factory method to create a FirebaseModel instance
+        fun create(
+            firestore: FirebaseFirestore,
+            firebaseAuth: FirebaseAuth,
+            cloudinaryModel: CloudinaryModel
+        ): FirebaseModel {
+            Log.d(TAG, "Creating a new FirebaseModel instance")
+            return FirebaseModel(firestore, firebaseAuth, cloudinaryModel)
+        }
+    }
+
+
+
+
+
+
     suspend fun getUserPosts(userId: String): List<PostModel> {
         return try {
             val querySnapshot = firestore.collection("posts")
@@ -69,22 +84,7 @@ class FirebaseModel @Inject constructor(
         return firebaseAuth.currentUser?.uid
     }
     // Save user to Firestore
-    suspend fun saveUser(user: UserModel): Boolean {
-        return try {
-            val json = mapOf(
-                "email" to user.email,
-                "fullname" to user.fullname,
-                "password" to user.password,
-                "id" to user.id
-            )
-            usersCollection.document(user.id).set(json).await()
-            Log.d("FirebaseModel", "User added with ID: ${user.id}")
-            true
-        } catch (e: Exception) {
-            Log.e("FirebaseModel", "Error adding user", e)
-            false
-        }
-    }
+
 
     // Update user in Firestore
     suspend fun updateUser(userId: String, updatedData: Map<String, Any>) {
@@ -199,26 +199,32 @@ suspend fun addCommentToPost(postId: String, comment: CommentModel): Int {
         }
     }
 
-    suspend fun registerUser(email: String, password: String, fullname: String): Result<Unit> {
-        return try {
-            // Register the user using Firebase Authentication
-            firebaseAuth.createUserWithEmailAndPassword(email, password).await()
 
-            // Save additional user information to Firestore
-            val userId = firebaseAuth.currentUser?.uid ?: UUID.randomUUID().toString()
-            val user = UserModel(
-                id = userId,
-                email = email,
-                fullname = fullname,
-                password = password // Consider hashing or encrypting the password in a production app
-            )
-            saveUser(user)
-
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+suspend fun registerUser(email: String, password: String, fullname: String): Result<Unit> {
+    return try {
+        val authResult = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
+        val userId = authResult.user?.uid ?: throw IllegalStateException("User ID not found")
+        val user = UserModel(
+            id = userId,
+            email = email,
+            fullname = fullname
+        )
+        saveUser(user)
+        Result.success(Unit)
+    } catch (e: Exception) {
+        Result.failure(e)
     }
+}
+
+private suspend fun saveUser(user: UserModel): Unit {
+    val userData = mapOf(
+        "email" to user.email,
+        "fullname" to user.fullname,
+        "id" to user.id
+    )
+   usersCollection.document(user.id).set(userData).await()
+}
+
     suspend fun getFollowersCount(userId: String): Int {
         return try {
             val userDocument = database.collection("users").document(userId).get().await()
@@ -326,60 +332,11 @@ suspend fun addCommentToPost(postId: String, comment: CommentModel): Int {
         }
     }
 
-    suspend fun addComment(postId: String, comment: CommentModel) {
-        try {
-            val currentUser = FirebaseAuth.getInstance().currentUser
-            if (currentUser != null) {
-                val postRef = firestore.collection("posts").document(postId)
-
-                // Create a new comment document with an auto-generated ID
-                val newCommentRef = postRef.collection("comments").document()
-
-                comment.apply {
-                    userId = currentUser.uid  // Set the userId from Firebase User
-                    commentId = newCommentRef.id  // Set the commentId to the new document ID
-                }
-
-                // Add the comment to Firestore
-                newCommentRef.set(comment).await()
-
-                // **Increment the comments count atomically**
-                postRef.update("commentsCount", FieldValue.increment(1)).await()
-
-                Log.d("FirestoreDebug", "Comment added successfully and count updated.")
-
-            } else {
-                Log.e("FirestoreError", "User not logged in")
-            }
-        } catch (e: Exception) {
-            Log.e("FirestoreError", "Error adding comment: ${e.message}", e)
-        }
-    }
 
 
 
-suspend fun getCommentsForPost(postId: String): List<CommentModel> {
-    return try {
-        val querySnapshot = firestore.collection("posts")
-            .document(postId)
-            .collection("comments")
-            .orderBy("timestamp", Query.Direction.DESCENDING)
-            .get()
-            .await()
 
-        val comments = querySnapshot.documents.mapNotNull { document ->
-            val comment = document.toObject(CommentModel::class.java)
-            Log.d("FirestoreDebug", "Fetched Comment: $comment") // ✅ Log fetched comments
-            comment
-        }
 
-        Log.d("FirestoreDebug", "Total Comments Fetched: ${comments.size}") // ✅ Log the number of comments
-        comments
-    } catch (e: Exception) {
-        Log.e("FirestoreError", "Error fetching comments: ${e.message}", e)
-        emptyList()
-    }
-}
 
     fun getPostLikesCount(postId: String, callback: (Long) -> Unit) {
         postsCollection.document(postId)
@@ -432,7 +389,6 @@ suspend fun getCommentsForPost(postId: String): List<CommentModel> {
             emptyList()
         }
     }
-
 
     fun fetchPostLikesCount(postId: String, callback: (Long) -> Unit) {
         val postRef = firestore.collection("posts").document(postId)
@@ -495,38 +451,6 @@ suspend fun getCommentsForPost(postId: String): List<CommentModel> {
         }
     }
 
-
-//
-
-
-//    suspend fun toggleLike(postId: String, userId: String, callback: (Boolean) -> Unit) {
-//        val postRef = firestore.collection("posts").document(postId)
-//        val likeRef = postRef.collection("likes").document(userId)
-//
-//        firestore.runTransaction { transaction ->
-//            val postSnapshot = transaction.get(postRef)
-//            val likeSnapshot = transaction.get(likeRef)
-//            var liked = false
-//
-//            if (likeSnapshot.exists()) {
-//                // If the like document exists, the user is unliking the post
-//                transaction.delete(likeRef)
-//                transaction.update(postRef, "likesCount", FieldValue.increment(-1))
-//            } else {
-//                // If the like document does not exist, the user is liking the post
-//                transaction.set(likeRef, hashMapOf("timestamp" to FieldValue.serverTimestamp()))
-//                transaction.update(postRef, "likesCount", FieldValue.increment(1))
-//                liked = true
-//            }
-//            // The operation is atomic; this block either succeeds fully or fails fully.
-//            liked // Return the status of the operation to indicate like or unlike
-//        }.addOnSuccessListener {
-//            callback(true) // Operation succeeded, callback with the result
-//        }.addOnFailureListener { e ->
-//            Log.e("FirestoreError", "Error toggling like", e)
-//            callback(false) // Operation failed, callback with the result
-//        }
-//    }
 suspend fun toggleLike(postId: String, userId: String): Boolean {
     val postRef = firestore.collection("posts").document(postId)
     val likeRef = postRef.collection("likes").document(userId)
@@ -558,8 +482,194 @@ suspend fun toggleLike(postId: String, userId: String): Boolean {
             Log.e("FirebaseError", "Error checking like status: ${e.message}")
             false
         }
-//
+
     }
+
+
+fun updatePost(postId: String, textContent: String, newImageUrl: String, oldImageUrl: String?) {
+
+
+
+
+        cloudinaryModel.deleteImageFromCloudinary(oldImageUrl!!,
+            onSuccess = {
+                Log.d("EditPostViewModel", "Old image deleted successfully")
+                updateFirestorePost(postId, textContent, newImageUrl)
+                        },
+            onError = { error ->
+                Log.e("EditPostViewModel", "Error deleting old image: $error")
+//                updateFirestorePost(postId, textContent, newImageUrl)
+            }
+        )
+
+
+}
+
+    // ✅ Helper function to update Firestore after deleting the old image
+    private fun updateFirestorePost(postId: String, textContent: String, newImageUrl: String) {// update func should upload the img to cloudinary
+        val updates = mapOf(
+            "textContent" to textContent,
+            "imageUrl" to newImageUrl
+        )
+
+        firestore.collection("posts").document(postId)
+            .set(updates, SetOptions.merge())
+            .addOnSuccessListener {
+                Log.d("EditPostViewModel", "Post updated successfully")
+            }
+            .addOnFailureListener { e ->
+                Log.e("EditPostViewModel", "Error updating post", e)
+            }
+    }
+
+
+    // Delete a post
+    suspend fun deletePost(postId: String) {
+        try {
+            postsCollection.document(postId).delete().await()
+            Log.d("FirebaseModel", "Post deleted successfully")
+        } catch (e: Exception) {
+            Log.e("FirebaseModel", "Error deleting post", e)
+        }
+    }
+
+
+fun uploadImageToCloudinary(bitmap: Bitmap, imageName: String, onSuccess: (String?) -> Unit, onError: (String?) -> Unit){
+    cloudinaryModel.uploadImage(bitmap, imageName, onSuccess = { url ->
+        if (url != null) {
+            Log.d("CameraRepository", "Image uploaded, URL received: $url")
+            onSuccess(url)
+//            createPost(bitmap, url, onSuccess, onError)  // Create post after getting the URL
+        } else {
+            onError("Failed to upload image, no URL returned")
+        }
+    }, onError = onError)
+
+
+}
+
+    fun createPost(bitmap: Bitmap, imageUrl: String, textContent: String, onSuccess: (String?) -> Unit, onError: (String?) -> Unit) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return onError("User is not logged in.")
+        val postMap = hashMapOf(
+            "userId" to userId,
+            "imageUrl" to imageUrl,  // Ensure this is the URL from Cloudinary
+            "textContent" to textContent,
+            "timestamp" to FieldValue.serverTimestamp()
+        )
+
+        postsCollection
+            .add(postMap)
+            .addOnSuccessListener {
+                Log.d("FirebaseModel", "Post successfully created with ID: ${it.id}")
+                onSuccess(it.id)
+            }
+            .addOnFailureListener {
+                Log.e("FirebaseModel", "Error creating post: ", it)
+                onError(it.message)
+            }
+    }
+
+
+    fun getPosts(onSuccess: (List<Map<String, Any>>) -> Unit, onFailure: (String) -> Unit){
+    postsCollection
+    .get()
+    .addOnSuccessListener { result ->
+        val posts = result.documents.mapNotNull { it.data }
+        onSuccess(posts)
+    }
+    .addOnFailureListener { e ->
+        onFailure("Failed to fetch posts: ${e.message}")
+    }
+    }
+
+    fun updatePostDetails(postId: String, newImageUrl: String?, newTextContent: String, onSuccess: (String) -> Unit, onError: (String) -> Unit) {
+        val updates = mutableMapOf<String, Any>()
+
+        if (!newImageUrl.isNullOrEmpty()) {
+            updates["imageUrl"] = newImageUrl
+        }
+        if (newTextContent.isNotEmpty()) {
+            updates["textContent"] = newTextContent
+        }
+
+        if (updates.isNotEmpty()) {
+            postsCollection.document(postId)
+                .update(updates)
+                .addOnSuccessListener {
+                    Log.d("FirebaseModel", "Post updated successfully")
+                    onSuccess(toString())
+                }
+                .addOnFailureListener { e ->
+                    Log.e("FirebaseModel", "Error updating post", e)
+                    onError(e.message ?: "Unknown error")
+                }
+        } else {
+            onError("No changes detected")
+        }
+    }
+
+    fun deleteImageFromCloudinary(imageUrl: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        cloudinaryModel.deleteImageFromCloudinary(imageUrl, onSuccess, onError)
+    }
+    suspend fun getCommentsForPost(postId: String): List<CommentModel> {
+        return try {
+
+            val querySnapshot = firestore.collection("posts")
+                .document(postId)
+                .collection("comments")
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .get()
+                .await()
+
+            val comments = querySnapshot.documents.mapNotNull { document ->
+                val comment = document.toObject(CommentModel::class.java)?.copy(
+                    commentId = document.id,  // ✅ Ensure commentId is set correctly
+                    postId = postId           // ✅ Ensure postId is added to each comment
+                )
+                Log.d("FirestoreDebug", "Fetched Comment: $comment") // ✅ Log fetched comments
+                comment
+            }
+
+
+            Log.d("FirestoreDebug", "Total Comments Fetched: ${comments.size}") // ✅ Log the number of comments
+            comments
+        } catch (e: Exception) {
+            Log.e("FirestoreError", "Error fetching comments: ${e.message}", e)
+            emptyList()
+        }
+    }
+
+    suspend fun addComment(postId: String, comment: CommentModel) {
+        try {
+            val currentUser = FirebaseAuth.getInstance().currentUser
+            if (currentUser != null) {
+                val postRef = firestore.collection("posts").document(postId)
+
+                // Create a new comment document with an auto-generated ID
+                val newCommentRef = postRef.collection("comments").document()
+
+                comment.apply {
+                    userId = currentUser.uid  // Set the userId from Firebase User
+                    commentId = newCommentRef.id  // Set the commentId to the new document ID
+                }
+
+                // Add the comment to Firestore
+                newCommentRef.set(comment).await()
+
+                // **Increment the comments count atomically**
+                postRef.update("commentsCount", FieldValue.increment(1)).await()
+
+                Log.d("FirestoreDebug", "Comment added successfully and count updated.")
+
+            } else {
+                Log.e("FirestoreError", "User not logged in")
+            }
+        } catch (e: Exception) {
+            Log.e("FirestoreError", "Error adding comment: ${e.message}", e)
+        }
+    }
+
+
 
 }
 
@@ -579,23 +689,6 @@ suspend fun toggleLike(postId: String, userId: String): Boolean {
 
 
 
-//    }
 
-// Upload image to Firebase Storage
-//    fun uploadImage(image: Bitmap, name: String, callback: (String?) -> Unit) {
-//        val storageRef = storage.reference
-//        val imageRef = storageRef.child("images/$name.jpg")
-//
-//        val baos = ByteArrayOutputStream()
-//        image.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-//        val data = baos.toByteArray()
-//
-//        val uploadTask = imageRef.putBytes(data)
-//        uploadTask.addOnFailureListener {
-//            callback(null) // TODO - still need to implement this
-//        }.addOnSuccessListener { taskSnapshot ->
-//            imageRef.downloadUrl.addOnSuccessListener { uri ->
-//                callback(uri.toString())
-//            }
-//        }
-//    }
+
+

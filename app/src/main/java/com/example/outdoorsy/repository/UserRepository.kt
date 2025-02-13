@@ -2,8 +2,8 @@ package com.example.outdoorsy.repository
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.example.outdoorsy.model.dao.UserModel
-import com.example.outdoorsy.model.dao.FirebaseModel
+import com.example.outdoorsy.model.FirebaseModel
+import com.example.outdoorsy.model.UserModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -30,9 +30,7 @@ class UserRepository @Inject constructor(
    return firebaseModel.getFollowersCount(userId)
     }
 
-//    suspend fun fetchUserById(userId: String): UserModel? {
-//      return firebaseModel.fetchUserById(userId)
-//    }
+
     suspend fun getUserById(userId: String): UserModel? {
        return firebaseModel.getUserById(userId)
     }

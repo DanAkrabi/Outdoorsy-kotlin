@@ -77,6 +77,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.firebase.inappmessaging)
+    implementation(libs.firebase.dataconnect)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -108,6 +109,15 @@ dependencies {
     kapt(libs.hilt.android.compiler)
 //    implementation (libs.androidx.hilt.lifecycle.viewmodel)
     kapt (libs.androidx.hilt.compiler)
+
+    implementation (libs.material)
+
+    implementation (libs.cloudinary.android)
+
+    var room_version ="2.6.1"
+    implementation(libs.androidx.room.runtime)
+    kapt("androidx.room:room-compiler:$room_version")
+    implementation(libs.androidx.room.ktx)
 
     // KAPT for Hilt annotation processing
 }
