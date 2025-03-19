@@ -52,8 +52,16 @@ class UserProfileFragment : Fragment() {
         observeUserProfile()
         observeUserPosts()
         observeFollowingStatus()
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            refreshUserProfile()
+        }
     }
-
+    private fun refreshUserProfile() {
+        val userId = args.userId
+        userProfileViewModel.fetchUserProfile(userId)
+        postViewModel.fetchUserPosts(userId)
+        binding.swipeRefreshLayout.isRefreshing = false // Stop the refresh indicator after fetching data
+    }
     private fun observeFollowingStatus() {
         userProfileViewModel.isFollowing.observe(viewLifecycleOwner) { isFollowing ->
             binding.buttonFollow.text = if (isFollowing) "Unfollow" else "Follow"
@@ -62,8 +70,9 @@ class UserProfileFragment : Fragment() {
 
     private fun observeUserProfile() {
         userProfileViewModel.userProfile.observe(viewLifecycleOwner) { user ->
-            binding.progressBar.visibility = View.GONE
             user?.let {
+                binding.progressBar.visibility = View.GONE
+
                 binding.textViewUserName.text = it.fullname
                 binding.textViewUserBio.text = it.bio
                 binding.textViewFollowersCount.text = it.followersCount.toString()
@@ -73,6 +82,10 @@ class UserProfileFragment : Fragment() {
                     .load(it.profileImg)
                     .placeholder(R.drawable.ic_profile_placeholder)
                     .into(binding.imageViewProfile)
+            }
+            if(user==null){
+                binding.progressBar.visibility = View.VISIBLE
+
             }
         }
 

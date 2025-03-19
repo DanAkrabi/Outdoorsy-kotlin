@@ -23,7 +23,12 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "weather_key", "\"${project.properties["API_KEY"] ?: ""}\"")
+        buildConfigField("String", "cloud_name", "\"${project.properties["CLOUD_NAME"] ?: ""}\"")
+        buildConfigField("String", "api_key", "\"${project.properties["API_KEY2"] ?: ""}\"")
+        buildConfigField("String", "api_secret", "\"${project.properties["API_SECRET"] ?: ""}\"")
     }
+
 
     buildTypes {
         release {
@@ -44,7 +49,7 @@ android {
     buildFeatures {
         compose = true
         dataBinding = true
-
+        buildConfig=true
     }
 
 
@@ -130,4 +135,10 @@ dependencies {
     implementation (libs.androidx.paging.runtime.ktx)
     implementation (libs.androidx.room.paging)
     // KAPT for Hilt annotation processing
+
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+// Ensure there is a comma at the end of each line
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
 }

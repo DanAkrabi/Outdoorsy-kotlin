@@ -14,16 +14,24 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
-
+import com.example.outdoorsy.BuildConfig
 class CloudinaryModel @Inject constructor(@ApplicationContext private val context: Context) {
 
     init {
+//        val config = mapOf(
+//            "cloud_name" to "doafwoglp",
+//            "api_key" to "744644397642942",
+//            "api_secret" to "080V466KGubZchpz6LWEk_B8pH8"
+//        )
         val config = mapOf(
-            "cloud_name" to "doafwoglp",
-            "api_key" to "744644397642942",
-            "api_secret" to "080V466KGubZchpz6LWEk_B8pH8"
+            "cloud_name" to BuildConfig.cloud_name,
+            "api_key" to BuildConfig.api_key,
+            "api_secret" to BuildConfig.api_secret
         )
         MediaManager.init(context, config)
+        Log.d("Cloudinary", "API Key: ${BuildConfig.api_key}")
+        Log.d("Cloudinary", "Cloud Name: ${BuildConfig.cloud_name}")
+        Log.d("Cloudinary", "API Secret: ${BuildConfig.api_secret}")
     }
 
     // ✅ Upload a single image

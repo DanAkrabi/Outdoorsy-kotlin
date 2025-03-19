@@ -49,6 +49,7 @@ class PostDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupSwipeRefresh()
         postViewModel.checkLikeStatus(args.post.postId, args.post.userId)
         val post = args.post  // ✅ Use SafeArgs directly
         binding.post = post
@@ -76,30 +77,31 @@ class PostDetailsFragment : Fragment() {
         setupViews(post)
     }
 
+    private fun setupSwipeRefresh() {
+        // Initialize swipe refresh layout
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            // Show the loading indicator while refreshing
+            binding.swipeRefreshLayout.isRefreshing = true
 
+            // Refresh the data
+            postViewModel.fetchPostDetails(args.post.postId)
+            commentsViewModel.fetchComments(args.post.postId) // Fetching the post comments
+
+            // Set up any other necessary listeners or data refresh logic
+            setupInteractionListeners(args.post)
+
+            // Once the data is loaded, stop the refreshing animation
+            binding.swipeRefreshLayout.isRefreshing = false
+        }
+    }
 
     private fun setupViews(post: PostModel) {
-        Log.d("PostDetailsFragment", "Post data: $post")  // ✅ Debugging log
+        Log.d("PostDetailsFragment", "Post data: $post")
 
-        // ✅ Display username immediately from post.fullname
-//        if (post.fullname.isNotEmpty()) {
-//            binding.textUsername.text = post.fullname
-//        } else {
-//            binding.textUsername.text = "Loading..."
-//            userViewModel.getUserDetails(post.userId) { fullname, profileImg ->
-//                binding.textUsername.text = fullname ?: "Unknown User"
-//                Glide.with(binding.imageUserProfile.context)
-//                    .load(profileImg ?: R.drawable.ic_profile_placeholder)
-//                    .into(binding.imageUserProfile)
-//            }
-//        }
-
-        // ✅ Load post image
         Glide.with(this)
             .load(post.imageUrl)
             .into(binding.imagePost)
 
-        // ✅ Set other post details
         binding.textCaption.text = post.textContent.ifEmpty { "No Description" }
         binding.commentsCount.text = "${post.commentsCount} Comments"
         binding.textTimestamp.text = post.timestamp.toString()

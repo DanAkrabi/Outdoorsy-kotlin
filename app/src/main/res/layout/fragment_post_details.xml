@@ -12,7 +12,10 @@
             type="com.example.outdoorsy.viewmodel.PostViewModel" />
 <!--            <import type="com.example.outdoorsy.util.BindingAdaptersKt" />-->
     </data>
-
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -264,5 +267,6 @@
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>
 

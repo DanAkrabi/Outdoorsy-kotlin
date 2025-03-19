@@ -52,7 +52,7 @@ fun updateUserProfile(
     val currentImageUrlValue = currentImageUrl.value
 
     // If there's a new image
-    if (newImageUri != null) {
+    if (newImageUri != null ) {
         val bitmap = uriToBitmap(newImageUri)
         if (bitmap == null) {
             onError("Failed to decode bitmap from URI")

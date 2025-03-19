@@ -13,7 +13,7 @@ import com.example.outdoorsy.R
 import com.example.outdoorsy.databinding.FragmentWeatherBinding
 import com.example.outdoorsy.viewmodel.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
-
+import com.example.outdoorsy.BuildConfig
 @AndroidEntryPoint
 class WeatherFragment : Fragment() {
 
@@ -32,7 +32,7 @@ class WeatherFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val cityName = "Tel Aviv"  // Use your desired city
-        val apiKey = "dc20172f8d61a2ab56998e21a59ca110"  // Your actual API key
+        val apiKey = BuildConfig.weather_key  // Your actual API key
 
         // Fetch weather data initially when the fragment is created
         weatherViewModel.getWeather(cityName, apiKey)

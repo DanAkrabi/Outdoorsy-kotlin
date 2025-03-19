@@ -29,6 +29,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.squareup.picasso.Callback
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import com.example.outdoorsy.BuildConfig
 
 
 @AndroidEntryPoint
@@ -56,6 +57,10 @@ class ProfileFragment : Fragment() {
         setupRecyclerView()
         observeViewModels()
         binding.progressBar.visibility = View.VISIBLE
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            refreshData()
+        }
+
         val logoutButton = view.findViewById<Button>(R.id.logoutButton)
         logoutButton.setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
@@ -80,7 +85,7 @@ class ProfileFragment : Fragment() {
         }
         binding.weatherButton.setOnClickListener {
             val cityName = "Tel Aviv"  // Or get the city from SharedPreferences or a config
-            val apiKey = "dc20172f8d61a2ab56998e21a59ca110"  // Use your actual OpenWeather API key
+            val apiKey = BuildConfig.weather_key  // Use your actual OpenWeather API key
             weatherViewModel.getWeather(cityName, apiKey)  // Call the ViewModel to fetch weather
             findNavController().navigate(R.id.action_profileFragment_to_weatherFragment)
         }
@@ -111,6 +116,7 @@ class ProfileFragment : Fragment() {
 
         profileViewModel.user.observe(viewLifecycleOwner) { user ->
             user?.let {
+                binding.swipeRefreshLayout.isRefreshing = false
                 binding.progressBar.visibility = View.GONE
                 binding.profileName.text = it.fullname
                 binding.profileBio.text = it.bio ?: "No bio available"
@@ -128,6 +134,15 @@ class ProfileFragment : Fragment() {
 
         profileViewModel.followingCount.observe(viewLifecycleOwner) { count ->
             binding.followingCount.text = count.toString()
+        }
+    }
+    private fun refreshData() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId != null) {
+            binding.progressBar.visibility = View.VISIBLE
+            profileViewModel.fetchUserData(userId)
+            profileViewModel.fetchUserPosts(userId)
+            profileViewModel.fetchFollowersAndFollowingCounts(userId)
         }
     }
 
