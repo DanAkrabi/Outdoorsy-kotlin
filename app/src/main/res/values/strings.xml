@@ -16,4 +16,7 @@
     <string name="edit_profile_image">edit profile image</string>
     <string name="edit_profile_name">edit profile name</string>
     <string name="edit_profile_button">Edit</string>
+    <string name="weather">Weather</string>
+    <string name="logout">Logout</string>
+    <string name="edit">Edit</string>
 </resources>

@@ -1,6 +1,8 @@
 package com.example.outdoorsy.di
 
 import android.content.Context
+import com.example.outdoorsy.data.api.RetrofitInstance
+import com.example.outdoorsy.data.api.WeatherApiService
 import com.example.outdoorsy.model.dao.AppLocalDb
 import com.example.outdoorsy.model.dao.CommentDao
 import com.example.outdoorsy.model.dao.PostDao
@@ -47,6 +49,12 @@ object AppModule {
     interface RemoteMediatorEntryPoint {
         fun getFirebaseFirestore(): FirebaseFirestore
         fun getAppLocalDb(): AppLocalDb
+    }
+    // Provide the WeatherApiService
+    @Provides
+    @Singleton
+    fun provideWeatherApiService(): WeatherApiService {
+        return RetrofitInstance.api // This is the instance of WeatherApiService created in RetrofitInstance
     }
 
 }

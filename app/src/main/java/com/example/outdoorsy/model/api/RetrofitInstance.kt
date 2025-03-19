@@ -1,5 +1,4 @@
-package com.example.outdoorsy.data.api  // ✅ Correct package
-
+package com.example.outdoorsy.data.api
 
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -15,12 +14,13 @@ object RetrofitInstance {
         .addInterceptor(logging)
         .build()
 
-    val api: ApiService by lazy {
+    val api: WeatherApiService by lazy {
         Retrofit.Builder()
-            .baseUrl("https://your-api.com/")  // Replace with actual API URL
+            .baseUrl("https://api.openweathermap.org/data/2.5/") // הכתובת של OpenWeatherMap API
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
-            .create(ApiService::class.java)
+            .create(WeatherApiService::class.java)
     }
 }
+

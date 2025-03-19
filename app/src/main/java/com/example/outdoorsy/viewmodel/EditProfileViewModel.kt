@@ -156,45 +156,6 @@ fun updateUserProfile(
         }
     }
 
-//fun updateUserProfile(fullName: String, newImageUri: String?, onSuccess: () -> Unit, onError: (String) -> Unit) {
-//    if (newImageUri != null) {
-//        userRepository.updateUserProfile(
-//            fullName = fullName,
-//            newImageUrl = newImageUri,
-//            currentImageUrl = currentImageUrl.value,
-//            onSuccess = {
-//                currentUser?.reload()?.addOnCompleteListener { task ->
-//                    if (task.isSuccessful) {
-//                        onSuccess()
-//                    } else {
-//                        onError(task.exception?.message ?: "Failed to refresh user")
-//                    }
-//                }
-//            },
-//            onError = onError
-//        )
-//    } else {
-//        userRepository.updateUserProfile(
-//            fullName = fullName,
-//            newImageUrl = null,
-//            currentImageUrl = currentImageUrl.value,
-//            onSuccess = {
-//                currentUser?.reload()?.addOnCompleteListener { task ->
-//                    if (task.isSuccessful) {
-//                        onSuccess()
-//                    } else {
-//                        onError(task.exception?.message ?: "Failed to refresh user")
-//                    }
-//                }
-//            },
-//            onError = onError
-//        )
-//    }
-//}
-
-
-
-
 }
 
 

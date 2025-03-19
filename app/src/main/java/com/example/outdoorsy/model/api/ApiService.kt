@@ -1,20 +1,23 @@
-package com.example.outdoorsy.data.api  // ✅ Correct package
+package com.example.outdoorsy.data.api
 
 import com.example.outdoorsy.model.PostModel
-import com.google.android.gms.common.api.Response
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Multipart
-import retrofit2.http.Part
+import com.example.outdoorsy.model.WeatherModel
 import okhttp3.MultipartBody
+import retrofit2.Response
+import retrofit2.http.GET
+import retrofit2.http.Multipart
+import retrofit2.http.POST
+import retrofit2.http.Part
+import retrofit2.http.Query
 
 interface ApiService {
-    @GET("posts")
-    suspend fun getPosts(): List<PostModel>
 
-    @Multipart
-    @POST("upload")
-    suspend fun uploadImage(@Part image: MultipartBody.Part): Unit
-//    suspend fun uploadImage(@Part image: MultipartBody.Part): Response<Unit>
 
+//    @GET("weather")
+//    suspend fun getWeather(@Query("q") city: String): WeatherModel
+    @GET("weather")
+    suspend fun getWeather(
+        @Query("q") city: String,
+        @Query("apiKey") apiKey: String
+    ): WeatherModel
 }

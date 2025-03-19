@@ -255,6 +255,12 @@
                         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:visibility="gone" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

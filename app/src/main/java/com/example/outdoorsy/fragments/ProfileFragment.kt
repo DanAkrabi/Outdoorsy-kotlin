@@ -24,6 +24,7 @@ import com.example.outdoorsy.model.PostModel
 import com.example.outdoorsy.viewmodel.ProfileViewModel
 import com.example.outdoorsy.viewmodel.UserViewModel
 import com.example.outdoorsy.viewmodel.PostViewModel
+import com.example.outdoorsy.viewmodel.WeatherViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.squareup.picasso.Callback
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,6 +39,7 @@ class ProfileFragment : Fragment() {
     private val userViewModel: UserViewModel by activityViewModels()
     private val profileViewModel: ProfileViewModel by viewModels()
     private val postViewModel: PostViewModel by viewModels()
+    private val weatherViewModel: WeatherViewModel by viewModels()
 
 
     private lateinit var postsAdapter: PostsAdapter
@@ -53,7 +55,7 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
         observeViewModels()
-
+        binding.progressBar.visibility = View.VISIBLE
         val logoutButton = view.findViewById<Button>(R.id.logoutButton)
         logoutButton.setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
@@ -76,6 +78,14 @@ class ProfileFragment : Fragment() {
             val action = ProfileFragmentDirections.actionProfileFragmentToEditProfileFragment(fullname, imageUrl)
             findNavController().navigate(action)
         }
+        binding.weatherButton.setOnClickListener {
+            val cityName = "Tel Aviv"  // Or get the city from SharedPreferences or a config
+            val apiKey = "dc20172f8d61a2ab56998e21a59ca110"  // Use your actual OpenWeather API key
+            weatherViewModel.getWeather(cityName, apiKey)  // Call the ViewModel to fetch weather
+            findNavController().navigate(R.id.action_profileFragment_to_weatherFragment)
+        }
+
+
 
 
 
@@ -101,6 +111,7 @@ class ProfileFragment : Fragment() {
 
         profileViewModel.user.observe(viewLifecycleOwner) { user ->
             user?.let {
+                binding.progressBar.visibility = View.GONE
                 binding.profileName.text = it.fullname
                 binding.profileBio.text = it.bio ?: "No bio available"
                 Glide.with(this).load(it.profileImg).into(binding.profileImage)

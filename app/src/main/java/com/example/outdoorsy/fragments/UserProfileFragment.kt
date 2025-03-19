@@ -38,6 +38,8 @@ class UserProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.progressBar.visibility = View.VISIBLE
+
         binding.buttonFollow.setOnClickListener {
             userProfileViewModel.toggleFollowUser(args.userId)
         }
@@ -60,6 +62,7 @@ class UserProfileFragment : Fragment() {
 
     private fun observeUserProfile() {
         userProfileViewModel.userProfile.observe(viewLifecycleOwner) { user ->
+            binding.progressBar.visibility = View.GONE
             user?.let {
                 binding.textViewUserName.text = it.fullname
                 binding.textViewUserBio.text = it.bio

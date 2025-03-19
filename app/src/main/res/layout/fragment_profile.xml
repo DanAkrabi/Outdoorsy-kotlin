@@ -41,44 +41,62 @@
                 app:layout_constraintTop_toBottomOf="@+id/profile_image"
                 tools:text="John Doe" />
 
-            <!-- User Bio -->
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/logoutButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="90dp"
                 android:backgroundTint="?attr/colorError"
-                android:layoutDirection="ltr"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="8dp"
-                android:text="Logout"
+                android:text="@string/logout"
                 android:textAllCaps="false"
                 android:textColor="?attr/colorOnError"
                 app:cornerRadius="16dp"
                 app:icon="@drawable/ic_logout"
                 app:iconGravity="textStart"
                 app:iconTint="@android:color/white"
+                app:layout_constraintBottom_toTopOf="@+id/profile_bio"
+                app:layout_constraintEnd_toStartOf="@id/profile_image"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="@id/profile_image" />
 
+            <!-- Edit Profile Button (below logout button) -->
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/editProfileButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="12dp"
+                android:layout_width="100dp"
+                android:layout_height="49dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="12dp"
                 android:padding="12dp"
-                android:text="@string/edit_profile_button"
+                android:text="@string/edit"
                 android:textAllCaps="false"
                 app:backgroundTint="@color/colorPrimaryContainer"
                 app:cornerRadius="16dp"
                 app:icon="@drawable/ic_edit"
                 app:iconGravity="textStart"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/logoutButton"
                 app:layout_constraintTop_toBottomOf="@id/logoutButton" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/weatherButton"
+                android:layout_width="86dp"
+                android:layout_height="48dp"
+                android:layout_marginBottom="90dp"
+                android:padding="12dp"
+                android:text="@string/weather"
+                android:textAllCaps="false"
+                app:backgroundTint="@color/colorPrimaryContainer"
+                app:cornerRadius="16dp"
+                app:iconGravity="textStart"
+                app:layout_constraintBottom_toTopOf="@+id/profile_bio"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.845"
+                app:layout_constraintStart_toEndOf="@+id/logoutButton"
+                app:layout_constraintTop_toTopOf="@+id/logoutButton"
+                app:layout_constraintVertical_bias="0.0" />
 
             <TextView
                 android:id="@+id/profile_bio"
@@ -91,6 +109,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/profile_name"
                 tools:text="@string/sample_bio" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:indeterminate="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <!-- Following/Followers Layout -->
             <LinearLayout

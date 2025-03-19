@@ -1,5 +1,6 @@
 package com.example.outdoorsy.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,6 +9,7 @@ import com.example.outdoorsy.model.PostModel
 import com.example.outdoorsy.model.UserModel
 import com.example.outdoorsy.repository.PostRepository
 import com.example.outdoorsy.repository.UserRepository
+import com.example.outdoorsy.repository.WeatherRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,6 +18,7 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val postRepository: PostRepository,
+
 //    private val userViewModel: UserViewModel,
 
 ) : ViewModel() {
@@ -37,6 +40,7 @@ class ProfileViewModel @Inject constructor(
             _user.postValue(userRepository.getUserById(userId)) // Assuming getUser returns LiveData
         }
     }
+
 
 
 fun fetchUserPosts(userId: String) {

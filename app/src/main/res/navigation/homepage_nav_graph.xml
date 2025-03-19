@@ -95,8 +95,11 @@
                 android:name="imageUrl"
                 app:argType="string" />
         </action>
+        <action
+            android:id="@+id/action_profileFragment_to_weatherFragment"
+            app:destination="@id/weatherFragment" />
 
-        <!-- Edit Profile Fragment -->
+
 
     </fragment>
 
@@ -179,4 +182,14 @@
             app:destination="@id/navigation_profile" />
     </fragment>
 
+    <!-- Weather Fragment-->
+    <fragment
+        android:id="@+id/weatherFragment"
+        android:name="com.example.outdoorsy.fragments.WeatherFragment"
+        android:label="Weather"
+        tools:layout="@layout/fragment_weather">
+        <action
+            android:id="@+id/action_weatherFragment_to_navigation_home"
+            app:destination="@id/navigation_home" />
+    </fragment>
 </navigation>

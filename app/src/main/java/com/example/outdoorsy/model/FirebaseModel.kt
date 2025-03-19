@@ -20,9 +20,9 @@ class FirebaseModel @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val cloudinaryModel: CloudinaryModel
 
-//    private val userViewModel: UserViewModel
+
 ) {
-//    private val auth = FirebaseAuth.getInstance()
+
 
     private val database =firestore // Initializing a firebase instance
     val usersCollection = firestore.collection("users")
@@ -89,58 +89,6 @@ class FirebaseModel @Inject constructor(
 
 
 
-//    fun updateUserProfile(fullName: String, newImageUrl: String?,onSuccess: () -> Unit) {
-//        val currentUser = FirebaseAuth.getInstance().currentUser
-//
-//        currentUser?.let { user ->
-//            // Update Firebase Auth profile
-//            val profileUpdates = com.google.firebase.auth.UserProfileChangeRequest.Builder()
-//                .setDisplayName(fullName)
-//                .apply {
-//                    newImageUrl?.let {
-//                        setPhotoUri(Uri.parse(it))
-//                    }
-//                }.build()
-//
-//            user.updateProfile(profileUpdates).addOnCompleteListener { task ->
-//                if (task.isSuccessful) {
-//                    // Update user details in your repository/database
-//                    viewModelScope.launch {
-//                        userRepository.updateUserProfile(user.uid, fullName, newImageUrl)
-//                        onSuccess()
-//                    }
-//                }
-//            }
-//        }
-//    }
-
-//    fun updateUserProfile(
-//        fullName: String,
-//        imageUrl: String?,
-//        currentImageUrl: String?,
-//        onSuccess: () -> Unit,
-//        onError: (String) -> Unit
-//    ) {
-//        val currentUser = FirebaseAuth.getInstance().currentUser
-//        val updates = hashMapOf<String, Any>()
-//        updates["fullname"] = fullName
-//        imageUrl?.let { updates["imageUrl"] = it }
-//
-//        currentUser?.let { user ->
-//            user.updateProfile(UserProfileChangeRequest.Builder().setDisplayName(fullName).setPhotoUri(Uri.parse(imageUrl)).build())
-//                .addOnCompleteListener { task ->
-//                    if (task.isSuccessful) {
-//                        // Firestore update
-//                      usersCollection.document(user.uid)
-//                            .update(updates)
-//                            .addOnSuccessListener { onSuccess() }
-//                            .addOnFailureListener { e -> onError(e.localizedMessage ?: "An error occurred") }
-//                    } else {
-//                        onError(task.exception?.localizedMessage ?: "Profile update failed")
-//                    }
-//                }
-//        } ?: onError("User not logged in")
-//    }
     suspend fun getUserPosts(userId: String): List<PostModel> {
         return try {
             val querySnapshot = firestore.collection("posts")
@@ -155,19 +103,7 @@ class FirebaseModel @Inject constructor(
             emptyList() // Return an empty list if an error occurs
         }
     }
-//    suspend fun getUsersByName(query: String): List<UserModel> {
-//        return try {
-//            database.collection("users")
-//                .orderBy("fullname")
-//                .startAt(query)
-//                .endAt(query + "\uf8ff")
-//                .get()
-//                .await()
-//                .toObjects(UserModel::class.java)
-//        } catch (e: Exception) {
-//            emptyList()
-//        }
-//    }
+
 suspend fun getUsersByName(query: String): List<UserModel> {
     val database = FirebaseFirestore.getInstance()
     return try {
@@ -460,45 +396,7 @@ private suspend fun saveUser(user: UserModel): Unit {
             }
     }
 
-//
-//    suspend fun getFeedPosts(userId: String): List<PostModel> {
-//        return try {
-//            val followingIds = firestore.collection("users")
-//                .document(userId)
-//                .collection("following")
-//                .get()
-//                .await()
-//                .documents.mapNotNull { it.id }
-//
-//            Log.d("FirebaseModel", "User follows: $followingIds")
-//
-//            if (followingIds.isEmpty()) {
-//                Log.d("FirebaseModel", "User is not following anyone.")
-//                return emptyList()
-//            }
-//
-//            // Create a compound query to fetch posts from all followed users
-//            val query = firestore.collection("posts")
-//                .whereIn("userId", followingIds) // Use whereIn to query across multiple users
-//                .orderBy("timestamp", Query.Direction.DESCENDING)
-//                .limit(10) // Limit to the newest 10 posts
-//
-//            val querySnapshot = query.get().await()
-//
-//            val posts = querySnapshot.documents.mapNotNull { document ->
-//                document.toObject(PostModel::class.java)?.copy(postId = document.id)
-//            }
-//
-//            Log.d("FirebaseModel", "Total Feed posts: ${posts.size}")
-//            return posts
-//        } catch (e: FirebaseFirestoreException) {
-//            Log.e("FirestoreError", "Firestore error: ${e.message}", e)
-//            emptyList()
-//        } catch (e: Exception) {
-//            Log.e("FirestoreError", "Unexpected error: ${e.message}", e)
-//            emptyList()
-//        }
-//    }
+
 suspend fun getFeedPosts(userId: String): List<PostModel> {
     return try {
         // Fetch the list of followed users
@@ -543,17 +441,7 @@ suspend fun getFeedPosts(userId: String): List<PostModel> {
     }
 }
 
-    suspend fun getDocumentSnapshotForPost(postId: String): DocumentSnapshot? {
-        return try {
-            firestore.collection("posts")
-                .document(postId)
-                .get()
-                .await()
-        } catch (e: Exception) {
-            Log.e("FirebaseModel", "Error fetching DocumentSnapshot for postId: $postId", e)
-            null
-        }
-    }
+
 
     fun fetchPostLikesCount(postId: String, callback: (Long) -> Unit) {
         val postRef = firestore.collection("posts").document(postId)
@@ -638,17 +526,7 @@ suspend fun toggleLike(postId: String, userId: String): Boolean {
         }
     }.await()
 }
-//    suspend fun checkIfLiked(postId: String, userId: String): Boolean {
-//        val likeRef = postsCollection.document(postId).collection("likes").document(userId)
-//        return try {
-//            val snapshot = likeRef.get().await()
-//            snapshot.exists()
-//        } catch (e: Exception) {
-//            Log.e("FirebaseError", "Error checking like status: ${e.message}")
-//            false
-//        }
-//
-//    }
+
 
     suspend fun checkIfLiked(postId: String, userId: String): Boolean {
         if (postId.isEmpty() || userId.isEmpty()) {
