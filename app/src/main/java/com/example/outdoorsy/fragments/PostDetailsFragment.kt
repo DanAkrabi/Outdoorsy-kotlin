@@ -82,17 +82,17 @@ class PostDetailsFragment : Fragment() {
         Log.d("PostDetailsFragment", "Post data: $post")  // ✅ Debugging log
 
         // ✅ Display username immediately from post.fullname
-        if (post.fullname.isNotEmpty()) {
-            binding.textUsername.text = post.fullname
-        } else {
-            binding.textUsername.text = "Loading..."
-            userViewModel.getUserDetails(post.userId) { fullname, profileImg ->
-                binding.textUsername.text = fullname ?: "Unknown User"
-                Glide.with(binding.imageUserProfile.context)
-                    .load(profileImg ?: R.drawable.ic_profile_placeholder)
-                    .into(binding.imageUserProfile)
-            }
-        }
+//        if (post.fullname.isNotEmpty()) {
+//            binding.textUsername.text = post.fullname
+//        } else {
+//            binding.textUsername.text = "Loading..."
+//            userViewModel.getUserDetails(post.userId) { fullname, profileImg ->
+//                binding.textUsername.text = fullname ?: "Unknown User"
+//                Glide.with(binding.imageUserProfile.context)
+//                    .load(profileImg ?: R.drawable.ic_profile_placeholder)
+//                    .into(binding.imageUserProfile)
+//            }
+//        }
 
         // ✅ Load post image
         Glide.with(this)
@@ -172,25 +172,29 @@ class PostDetailsFragment : Fragment() {
             }
 
 
-
-
         postViewModel.post.observe(viewLifecycleOwner) { updatedPost ->
             if (updatedPost != null) {
-                Log.d("PostDetailsFragment", "Updated post: ${updatedPost.textContent}")
+                Log.d("PostDetailsFragment", "post.observe() - Updated post received: $updatedPost")
 
-                binding.post = updatedPost  //  Update data binding
-                binding.executePendingBindings()  //  Force UI update
+                // Preserve the fullname if it's missing in the updated post
+                val preservedPost = updatedPost.copy(
+                    fullname = if (updatedPost.fullname.isNotEmpty()) updatedPost.fullname else binding.textUsername.text.toString()
+                )
 
-                binding.commentsCount.text = "${updatedPost.commentsCount} Comments"
-                binding.likesCount.text = "${updatedPost.likesCount} Likes"
+                binding.post = preservedPost
+                binding.executePendingBindings() // Ensure UI updates
 
-                if (!updatedPost.textContent.isNullOrEmpty()) {
-                    binding.textCaption.text = updatedPost.textContent
+                binding.commentsCount.text = "${preservedPost.commentsCount} Comments"
+                binding.likesCount.text = "${preservedPost.likesCount} Likes"
+
+                if (!preservedPost.textContent.isNullOrEmpty()) {
+                    binding.textCaption.text = preservedPost.textContent
                 } else {
                     binding.textCaption.text = "No Description"
                 }
             }
         }
+
         postViewModel.likesCount.observe(viewLifecycleOwner) { updatedLikes ->
 
             binding.likesCount.text = "$updatedLikes Likes"

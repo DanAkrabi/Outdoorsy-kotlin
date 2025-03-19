@@ -59,9 +59,9 @@
                 android:layout_marginTop="16dp"
                 android:contentDescription="Post Image"
                 android:scaleType="centerCrop"
-                app:layout_constraintTop_toBottomOf="@id/userProfileInfoLayout"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/userProfileInfoLayout"
                 tools:src="@drawable/ic_profile_placeholder" />
 
             <!-- Like & Comment Counts -->

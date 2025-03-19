@@ -27,8 +27,8 @@ class PostViewModel @Inject constructor(
 
 
     private val _posts = MutableLiveData<List<PostModel>>()
-//    val posts: LiveData<List<PostModel>> get() = _posts
-val posts: LiveData<List<PostModel>> = postRepository.getLocalPosts()
+    //    val posts: LiveData<List<PostModel>> get() = _posts
+    val posts: LiveData<List<PostModel>> = postRepository.getLocalPosts()
 
     private val _post = MutableLiveData<PostModel>()
     val post: LiveData<PostModel> get() = _post
@@ -52,6 +52,10 @@ val posts: LiveData<List<PostModel>> = postRepository.getLocalPosts()
             val posts = postRepository.getUserPosts(userId)
             _posts.postValue(posts)
         }
+    }
+
+    suspend fun clearAllRoomPosts(){
+        postRepository.clearAllRoomPosts()
     }
 
     // Fetch a single post's details, including likes and comments
@@ -98,13 +102,13 @@ val posts: LiveData<List<PostModel>> = postRepository.getLocalPosts()
     }
 
 
-fun fetchPostLikesCount(postId: String) {
-    viewModelScope.launch {
-        postRepository.fetchPostLikesCount(postId) { likes ->
-            _likesCount.postValue(likes)
+    fun fetchPostLikesCount(postId: String) {
+        viewModelScope.launch {
+            postRepository.fetchPostLikesCount(postId) { likes ->
+                _likesCount.postValue(likes)
+            }
         }
     }
-}
 
     // Observe likes count changes continuously
     fun observeLikesCount(postId: String) {
@@ -113,34 +117,34 @@ fun fetchPostLikesCount(postId: String) {
         }
     }
 
-fun toggleLike(postId: String) {
-    viewModelScope.launch {
-        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return@launch
+    fun toggleLike(postId: String) {
+        viewModelScope.launch {
+            val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return@launch
 
-        // ✅ Store the previous state before toggling
-        val isCurrentlyLiked = _isLikedByUser.value ?: false
+            // ✅ Store the previous state before toggling
+            val isCurrentlyLiked = _isLikedByUser.value ?: false
 
-        // ✅ Perform the Firestore operation
-        val success = postRepository.toggleLike(postId, currentUserId)
-        val updatedIsLiked = postRepository.isLikedByUser(postId, currentUserId)
+            // ✅ Perform the Firestore operation
+            val success = postRepository.toggleLike(postId, currentUserId)
+            val updatedIsLiked = postRepository.isLikedByUser(postId, currentUserId)
 
-        if (success) {
-            // ✅ Force an immediate UI update based on the expected outcome
-            _isLikedByUser.postValue(!isCurrentlyLiked)
+            if (success) {
+                // ✅ Force an immediate UI update based on the expected outcome
+                _isLikedByUser.postValue(!isCurrentlyLiked)
 
-            // ✅ Fetch the actual state from Firestore to confirm the UI is correct
-            _isLikedByUser.postValue(updatedIsLiked)
+                // ✅ Fetch the actual state from Firestore to confirm the UI is correct
+                _isLikedByUser.postValue(updatedIsLiked)
 
-            // ✅ Ensure the likes count is updated correctly
-            postRepository.getPostLikesCount(postId) { likes ->
-                _likesCount.postValue(likes)
+                // ✅ Ensure the likes count is updated correctly
+                postRepository.getPostLikesCount(postId) { likes ->
+                    _likesCount.postValue(likes)
+                }
+            } else {
+                _isLikedByUser.postValue(updatedIsLiked)
+                Log.e("FirestoreError", "Toggle like failed")
             }
-        } else {
-            _isLikedByUser.postValue(updatedIsLiked)
-            Log.e("FirestoreError", "Toggle like failed")
         }
     }
-}
 
     fun fetchFeedPosts(userId: String) {
         viewModelScope.launch {
@@ -170,5 +174,3 @@ fun toggleLike(postId: String) {
 
 
 }
-
-

@@ -28,4 +28,14 @@ interface CommentDao {
     @Query("SELECT * FROM comments ORDER BY timestamp DESC")
     fun getAllComments(): LiveData<List<CommentModel>>
 
+
+    @Query("DELETE FROM comments WHERE commentId LIKE :postId || '-%'")
+    suspend fun clearCommentsForPost(postId: String)
+
+
+
+    @Transaction
+    suspend fun runInTransaction(run: suspend () -> Unit) {
+        run()
+    }
 }

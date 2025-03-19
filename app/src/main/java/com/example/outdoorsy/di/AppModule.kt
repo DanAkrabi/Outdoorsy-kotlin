@@ -5,8 +5,10 @@ import com.example.outdoorsy.model.dao.AppLocalDb
 import com.example.outdoorsy.model.dao.CommentDao
 import com.example.outdoorsy.model.dao.PostDao
 import com.example.outdoorsy.model.dao.UserDao
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
@@ -39,4 +41,12 @@ object AppModule {
     fun provideUserDao(database: AppLocalDb): UserDao {
         return database.userDao()
     }
+
+    @InstallIn(SingletonComponent::class)
+    @EntryPoint
+    interface RemoteMediatorEntryPoint {
+        fun getFirebaseFirestore(): FirebaseFirestore
+        fun getAppLocalDb(): AppLocalDb
+    }
+
 }

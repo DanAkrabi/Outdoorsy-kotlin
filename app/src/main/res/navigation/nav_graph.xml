@@ -39,5 +39,32 @@
             app:argType="com.example.outdoorsy.model.PostModel" />
     </fragment>
 
+    <!-- EditPost Fragment -->
+    <fragment
+        android:id="@+id/editPostFragment"
+        android:name="com.example.outdoorsy.fragments.EditPostFragment"
+        android:label="Edit Post">
+
+        <!-- ✅ Modify the action to include userId -->
+        <action
+            android:id="@+id/action_editPostFragment_to_userProfileFragment"
+            app:destination="@id/userProfileFragment">
+            <argument
+                android:name="userId"
+                app:argType="string" />
+        </action>
+
+    </fragment>
+
+
+    <!-- UserProfile Fragment -->
+    <fragment
+        android:id="@+id/userProfileFragment"
+        android:name="com.example.outdoorsy.fragments.UserProfileFragment"
+        android:label="User Profile"
+        tools:layout="@layout/fragment_user_profile" />
+
+
+
 </navigation>
 

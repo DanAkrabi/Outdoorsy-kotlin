@@ -40,9 +40,10 @@
                     app:cardCornerRadius="8dp"
                     app:cardElevation="4dp">
 
+
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="200dp">
+                        android:layout_height="300dp">
 
                         <ImageView
                             android:id="@+id/imageViewPost"
@@ -64,6 +65,7 @@
                             android:src="@android:drawable/ic_menu_gallery" />
 
                     </RelativeLayout>
+
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.textfield.TextInputLayout

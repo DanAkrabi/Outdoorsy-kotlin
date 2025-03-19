@@ -1,5 +1,6 @@
 package com.example.outdoorsy.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +15,7 @@ class SearchAdapter(private val onUserClick: (UserModel) -> Unit) :
     private var userList: List<UserModel> = emptyList()
 
     fun submitList(newList: List<UserModel>) {
+        Log.d("Search", "in SearchAdapter - Updating adapter with ${newList.size} users")
         userList = newList
         notifyDataSetChanged()
     }
@@ -28,10 +30,16 @@ class SearchAdapter(private val onUserClick: (UserModel) -> Unit) :
 
 
     override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
+        Log.d("Search", "in SearchAdapter - Binding user: ${userList[position].fullname}")
+
         holder.bind(userList[position])
     }
 
-    override fun getItemCount(): Int = userList.size
+//    override fun getItemCount(): Int = userList.size
+override fun getItemCount(): Int {
+    Log.d("SearchAdapter", "getItemCount(): ${userList.size}")
+    return userList.size
+}
 
     inner class SearchViewHolder(private val binding: ItemSearchResultBinding) :
         RecyclerView.ViewHolder(binding.root) {

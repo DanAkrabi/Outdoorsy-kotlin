@@ -114,10 +114,20 @@ dependencies {
 
     implementation (libs.cloudinary.android)
 
-    var room_version ="2.6.1"
     implementation(libs.androidx.room.runtime)
-    kapt("androidx.room:room-compiler:$room_version")
+    kapt("androidx.room:room-compiler:2.6.1")
     implementation(libs.androidx.room.ktx)
+    implementation (libs.picasso.v28)
 
+    implementation(libs.retrofit) // Use the latest version
+
+    // Gson Converter (for JSON)
+    implementation(libs.converter.gson) // Use the same version as Retrofit
+
+    // OkHttp (Retrofit uses OkHttp for networking)
+    implementation(libs.okhttp) // Use the latest version
+    implementation(libs.logging.interceptor)
+    implementation (libs.androidx.paging.runtime.ktx)
+    implementation (libs.androidx.room.paging)
     // KAPT for Hilt annotation processing
 }

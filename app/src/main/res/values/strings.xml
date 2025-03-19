@@ -13,4 +13,7 @@
     <string name="cancel">Cancel</string>
     <string name="delete_post">DELETE POST</string>
     <string name="choose_image">Choose image from gallery</string>
+    <string name="edit_profile_image">edit profile image</string>
+    <string name="edit_profile_name">edit profile name</string>
+    <string name="edit_profile_button">Edit</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.example.outdoorsy.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,8 +53,14 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
 
         searchViewModel.searchResults.observe(viewLifecycleOwner) { users ->
+            Log.d("Search", "Received ${users.size} users") // ✅ Debug log
+
             searchAdapter.submitList(users)
+            binding.recyclerViewSearchResults.apply {
+                visibility = if (users.isEmpty()) View.GONE else View.VISIBLE
+            }
         }
+
     }
 
     private fun navigateToUserProfile(userId: String) {

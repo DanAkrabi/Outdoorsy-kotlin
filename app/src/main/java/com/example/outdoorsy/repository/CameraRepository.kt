@@ -53,6 +53,8 @@ class CameraRepository @Inject constructor(
         )
     }
 
+
+
     fun deleteImageFromCloudinary(imageUrl: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
        firebaseModel.deleteImageFromCloudinary(imageUrl, onSuccess, onError)
     }

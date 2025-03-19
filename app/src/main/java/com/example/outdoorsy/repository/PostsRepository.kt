@@ -3,40 +3,52 @@ package com.example.outdoorsy.repository
 
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.PagingSource
 import com.example.outdoorsy.model.CommentModel
 import com.example.outdoorsy.model.dao.PostDao
 import com.example.outdoorsy.model.PostModel
 import com.example.outdoorsy.model.FirebaseModel
+import com.example.outdoorsy.model.dao.AppLocalDb
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class PostRepository @Inject constructor(
-    private val postDao: PostDao,  // 🔥 Inject Room Database DAO
-    private val firebaseModel: FirebaseModel // Firebase
+//    private val postDao: PostDao,  // 🔥 Inject Room Database DAO
+    val firebaseModel: FirebaseModel, // Firebase
+    val database: AppLocalDb// Firebase
+
 ) {
-
+    val postDao=database.postDao()
+    val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
     // ✅ Get posts from Room (local cache)
-    fun getLocalPosts(): LiveData<List<PostModel>> = postDao.getAllPosts()
 
-    // ✅ Get posts from Firebase (remote DB) and update Room
-//    suspend fun getUserPosts(userId: String): List<PostModel> {
-//        return withContext(Dispatchers.IO) {
-//            val remotePosts = firebaseModel.getUserPosts(userId)
-//            postDao.clearAllPosts()  // Refresh cache
-//            postDao.insertPosts(remotePosts)  // Store in Room
-//            remotePosts
-//        }
-//    }
+
+    fun getLocalPosts(): LiveData<List<PostModel>> {
+        return postDao.getAllPosts()
+    }
+
+suspend fun clearAllRoomPosts(){
+    postDao.clearAllPosts()
+}
 
     suspend fun getUserPosts(userId: String): List<PostModel> {
         return withContext(Dispatchers.IO) {
-            val remotePosts = firebaseModel.getUserPosts(userId) // Fetch from Firebase
-            Log.d("PostRepository", "Loaded ${remotePosts.size} posts from Room")
+            // ✅ Clear all old posts from the local cache before fetching new ones
             postDao.clearAllPosts()
-            postDao.insertPosts(remotePosts)
+
+            val remotePosts = firebaseModel.getUserPosts(userId) // Fetch from Firebase
             Log.d("PostRepository", "Loaded ${remotePosts.size} posts from Firebase")
-            remotePosts // ✅ Return plain list
+
+            postDao.insertPosts(remotePosts) // ✅ Store in Room
+            remotePosts // ✅ Return fresh list
         }
     }
 
@@ -54,11 +66,7 @@ class PostRepository @Inject constructor(
         postDao.insertPosts(remotePosts)
     }
 
-    // ✅ Add post (Firebase + Room)
-//    suspend fun insertPost(post: PostModel) {
-//        firebaseModel.uploadPost(post)  // Upload to Firebase
-//        postDao.insertPost(post) // Store in local cache
-//    }
+
 
     // ✅ Delete post
     suspend fun deletePost(postId: String) {
@@ -108,4 +116,10 @@ class PostRepository @Inject constructor(
     suspend fun getFeedPosts(userId: String): List<PostModel> {
         return firebaseModel.getFeedPosts(userId)
     }
+
+
+
+
+
+
 }

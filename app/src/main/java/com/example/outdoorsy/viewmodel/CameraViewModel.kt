@@ -5,6 +5,8 @@ import android.app.Application
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
@@ -123,67 +125,152 @@ class CameraViewModel @Inject constructor(
 
 
 
-    private fun uriToBitmap(uri: Uri): Bitmap? {
+//    private fun uriToBitmap(uri: Uri): Bitmap? {
+//        return try {
+//            application.contentResolver.openInputStream(uri)?.use {
+//                BitmapFactory.decodeStream(it)
+//            }
+//        } catch (e: Exception) {
+//            Log.e("CameraViewModel", "Error decoding bitmap from URI: $e")
+//            null
+//        }
+//    }
+private fun uriToBitmap(uri: Uri): Bitmap? {
+    return try {
+        val inputStream = application.contentResolver.openInputStream(uri)
+        val bitmap = BitmapFactory.decodeStream(inputStream)
+        inputStream?.close()
+
+        // 🔥 Rotate the bitmap before returning it
+        bitmap?.let { rotateBitmapIfNeeded(uri, it) }
+    } catch (e: Exception) {
+        Log.e("CameraViewModel", "Error decoding bitmap from URI: $e")
+        null
+    }
+}
+    private fun rotateBitmapIfNeeded(imageUri: Uri, bitmap: Bitmap): Bitmap {
         return try {
-            application.contentResolver.openInputStream(uri)?.use {
-                BitmapFactory.decodeStream(it)
+            val inputStream = application.contentResolver.openInputStream(imageUri)
+            val exif = inputStream?.let { ExifInterface(it) }
+            inputStream?.close()
+
+            val orientation = exif?.getAttributeInt(
+                ExifInterface.TAG_ORIENTATION,
+                ExifInterface.ORIENTATION_NORMAL
+            ) ?: ExifInterface.ORIENTATION_NORMAL
+
+            val matrix = Matrix()
+
+            when (orientation) {
+                ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
+                ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
+                ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
             }
+
+            Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
         } catch (e: Exception) {
-            Log.e("CameraViewModel", "Error decoding bitmap from URI: $e")
-            null
+            Log.e("CameraViewModel", "Error rotating bitmap: $e")
+            bitmap // If an error occurs, return the original bitmap
         }
     }
 
-    fun uploadImage(imageUri: Uri, description: String) {
-        try {
-            Log.d("CameraViewModel", "Loading bitmap from URI: $imageUri")
 
-            val bitmap = uriToBitmap(imageUri) ?: run {
-                Log.e("CameraViewModel", "Failed to decode bitmap from URI")
-                _capturePhotoError.value = "Failed to decode image"
-                return
-            }
+//    fun uploadImage(imageUri: Uri, description: String) {
+//        try {
+//            Log.d("CameraViewModel", "Loading bitmap from URI: $imageUri")
+//
+//            val bitmap = uriToBitmap(imageUri) ?: run {
+//                Log.e("CameraViewModel", "Failed to decode bitmap from URI")
+//                _capturePhotoError.value = "Failed to decode image"
+//                return
+//            }
+//
+//            val imageName = "image_${System.currentTimeMillis()}_${description.filter { it.isLetterOrDigit() }}"
+//
+//            if (_isUploading.value == true) {
+//                Log.d("CameraViewModel", "Upload already in progress.")
+//                return
+//            }
+//
+//            _isUploading.value = true
+//
+//            viewModelScope.launch {
+//                cameraRepository.uploadImageToCloudinary(
+//                    bitmap = bitmap,
+//                    imageName = imageName,
+//                    onSuccess = { url ->
+//                        Log.d("CameraViewModel", "Image uploaded successfully: $url")
+//
+//                        createPost(bitmap, url!!, description){ postId ->
+//                            Log.d("CameraViewModel", "Post created successfully: $postId")
+//
+//                            // ✅ Only navigate AFTER post is successfully uploaded
+//                            _navigateToProfile.postValue(FirebaseAuth.getInstance().currentUser?.uid)
+//
+//                        }
+//
+//
+//                        // ✅ Notify CameraFragment to navigate
+//                    },
+//                    onError = { error ->
+//                        Log.e("CameraViewModel", "Error uploading image: $error")
+//                        Toast.makeText(application, "Error uploading image: $error", Toast.LENGTH_LONG).show()
+//                        _uploadResult.postValue(Result.failure(Exception(error)))
+//                        _isUploading.postValue(false)
+//                    }
+//                )
+//            }
+//        } catch (e: Exception) {
+//            Log.e("CameraViewModel", "Error loading image", e)
+//            _capturePhotoError.value = "Error loading image: ${e.message}"
+//        }
+//    }
+fun uploadImage(imageUri: Uri, description: String) {
+    try {
+        Log.d("CameraViewModel", "Loading and rotating bitmap from URI: $imageUri")
 
-            val imageName = "image_${System.currentTimeMillis()}_${description.filter { it.isLetterOrDigit() }}"
+        val bitmap = uriToBitmap(imageUri) ?: run {
+            Log.e("CameraViewModel", "Failed to decode bitmap from URI")
+            _capturePhotoError.value = "Failed to decode image"
+            return
+        }
 
-            if (_isUploading.value == true) {
-                Log.d("CameraViewModel", "Upload already in progress.")
-                return
-            }
+        val imageName = "image_${System.currentTimeMillis()}_${description.filter { it.isLetterOrDigit() }}"
 
-            _isUploading.value = true
+        if (_isUploading.value == true) {
+            Log.d("CameraViewModel", "Upload already in progress.")
+            return
+        }
 
-            viewModelScope.launch {
-                cameraRepository.uploadImageToCloudinary(
-                    bitmap = bitmap,
-                    imageName = imageName,
-                    onSuccess = { url ->
-                        Log.d("CameraViewModel", "Image uploaded successfully: $url")
+        _isUploading.value = true
 
-                        createPost(bitmap, url!!, description){ postId ->
-                            Log.d("CameraViewModel", "Post created successfully: $postId")
+        viewModelScope.launch {
+            cameraRepository.uploadImageToCloudinary(
+                bitmap = bitmap,  // ✅ Upload rotated bitmap
+                imageName = imageName,
+                onSuccess = { url ->
+                    Log.d("CameraViewModel", "Image uploaded successfully: $url")
 
-                            // ✅ Only navigate AFTER post is successfully uploaded
-                            _navigateToProfile.postValue(FirebaseAuth.getInstance().currentUser?.uid)
-
-                        }
-
-
-                        // ✅ Notify CameraFragment to navigate
-                    },
-                    onError = { error ->
-                        Log.e("CameraViewModel", "Error uploading image: $error")
-                        Toast.makeText(application, "Error uploading image: $error", Toast.LENGTH_LONG).show()
-                        _uploadResult.postValue(Result.failure(Exception(error)))
-                        _isUploading.postValue(false)
+                    createPost(bitmap, url!!, description) { postId ->
+                        Log.d("CameraViewModel", "Post created successfully: $postId")
+                        _navigateToProfile.postValue(FirebaseAuth.getInstance().currentUser?.uid)
                     }
-                )
-            }
-        } catch (e: Exception) {
-            Log.e("CameraViewModel", "Error loading image", e)
-            _capturePhotoError.value = "Error loading image: ${e.message}"
+                },
+                onError = { error ->
+                    Log.e("CameraViewModel", "Error uploading image: $error")
+                    Toast.makeText(application, "Error uploading image: $error", Toast.LENGTH_LONG).show()
+                    _uploadResult.postValue(Result.failure(Exception(error)))
+                    _isUploading.postValue(false)
+                }
+            )
         }
+    } catch (e: Exception) {
+        Log.e("CameraViewModel", "Error loading image", e)
+        _capturePhotoError.value = "Error loading image: ${e.message}"
     }
+}
+
+
     private fun createPost(bitmap: Bitmap, imageUrl: String, description: String, onSuccess: (String) -> Unit) {
         cameraRepository.uploadPost(
             bitmap, imageUrl, description,

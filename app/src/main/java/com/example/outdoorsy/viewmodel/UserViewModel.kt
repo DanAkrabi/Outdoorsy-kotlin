@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.outdoorsy.model.UserModel
+import com.example.outdoorsy.model.dao.UserDao
 import kotlinx.coroutines.launch
 import com.example.outdoorsy.repository.UserRepository
 import com.google.firebase.auth.FirebaseAuth
@@ -16,6 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class UserViewModel @Inject constructor(
     private val userRepository: UserRepository,
+    private val userDao: UserDao
 ) : ViewModel() {
 
     val _user = MutableLiveData<UserModel?>()
@@ -32,51 +34,15 @@ class UserViewModel @Inject constructor(
 
     private val auth = FirebaseAuth.getInstance()
     private val loggedInUserId = auth.currentUser?.uid
-//    fun getUserDetails(userId: String) {
-//        viewModelScope.launch {
-//            val userDetails = userRepository.getUserById(userId)
-//            _user.postValue(userDetails)
-//        }
-//    }
-//    fun getUserDetails(userId: String, callback: (String?, String?) -> Unit) {
-//        viewModelScope.launch {
-//            try {
-//                val user = userRepository.getUserById(userId)
-//                callback(user?.fullname, user?.profileImg)
-//            } catch (e: Exception) {
-//                callback(null, null)
-//            }
-//        }
-//    }
-fun getUserDetails(userId: String, callback: (String?, String?) -> Unit) {
-    viewModelScope.launch {
-        Log.d("UserViewModel", "Fetching details for userID: $userId")
-        try {
-            val user = userRepository.getUserById(userId)
-            if (user != null) {
-                Log.d("UserViewModel", "User found: ${user.fullname}")
-                callback(user.fullname, user.profileImg)
-            } else {
-                Log.d("UserViewModel", "No user found for ID: $userId")
-                callback(null, null)
-            }
-        } catch (e: Exception) {
-            Log.e("UserViewModel", "Error fetching user details: ${e.message}", e)
-            callback(null, null)
-        }
-    }
-}
+
+
+
+val userLiveData: LiveData<UserModel> = userDao.getUserLiveData(loggedInUserId!!) // Observe local data
+
+
 
     // Fetch user by ID and update LiveData
-//    fun fetchUser(userId: String) {
-//        viewModelScope.launch {
-//            userRepository.getUserById(userId)?.let {
-//                _user.postValue(it)
-//
-//                checkIfFollowing(userId)
-//            } ?: Log.e("UserViewModel", "Failed to fetch user")
-//        }
-//    }
+
     fun fetchUser(userId: String) {
         viewModelScope.launch {
             val user = userRepository.getUserById(userId)
@@ -151,6 +117,76 @@ fun followButtonClicked(profileUserId: String) {
         }
     }
 
+//    fun getUserDetails(userId: String, callback: (String?, String?) -> Unit) {
+//        viewModelScope.launch {
+//            Log.d("UserViewModel", "Fetching details for userID: $userId")
+//            try {
+//                val user = userRepository.getUserById(userId)
+//                if (user != null) {
+//                    Log.d("UserViewModel", "User found: ${user.fullname}")
+//                    callback(user.fullname, user.profileImg)
+//                } else {
+//                    Log.d("UserViewModel", "No user found for ID: $userId")
+//                    callback(null, null)
+//                }
+//            } catch (e: Exception) {
+//                Log.e("UserViewModel", "Error fetching user details: ${e.message}", e)
+//                callback(null, null)
+//            }
+//        }
+//    }
+
+
+    fun getUserDetails(userId: String, callback: (String?, String?) -> Unit) {
+        viewModelScope.launch {
+            // Step 1: Try to load from Room (SQLite)
+            val cachedUser = userRepository.getUserById(userId)
+            if (cachedUser != null) {
+                Log.d("UserViewModel", "✅ Loaded user from Room: ${cachedUser.fullname}")
+                callback(cachedUser.fullname, cachedUser.profileImg)
+                return@launch // ✅ Stop here, no need to fetch from Firebase
+            }
+
+            // Step 2: If not found in Room, fetch from Firebase
+            Log.d("UserViewModel", "⏳ No cache found, fetching from Firebase for userID: $userId")
+            try {
+                val user = userRepository.getUserById(userId)
+                if (user != null) {
+                    Log.d("UserViewModel", "✅ User fetched from Firebase: ${user.fullname}")
+
+                    // Step 3: Store in Room for next time
+                    userDao.insertUser(user)
+                    Log.d("UserViewModel", "✅ Stored user in Room for caching")
+
+                    callback(user.fullname, user.profileImg) // ✅ Update UI with new data
+                } else {
+                    Log.e("UserViewModel", "🚨 No user found in Firebase")
+                    callback(null, null)
+                }
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "❌ Error fetching user from Firebase: ${e.message}", e)
+                callback(null, null)
+            }
+        }
+    }
+
+    fun getUserLiveData(userId: String): LiveData<UserModel> {
+        Log.d("RoomDebug", "Fetching user from Room DB: $userId")
+        return userDao.getUserLiveData(userId) // ✅ Observe user changes in Room
+    }
+
+    fun refreshUserData(userId: String) {
+        viewModelScope.launch {
+            val cachedUser = userRepository.getUserById(userId) // ✅ Uses repository (checks cache + Firebase)
+            if (cachedUser != null) {
+                Log.d("CacheDebug", "✅ Loaded user from Room cache: ${cachedUser.fullname}")
+                _user.postValue(cachedUser) // ✅ Update UI
+            } else {
+
+                Log.e("UserViewModel", "Failed to fetch user")
+            }
+        }
+    }
 
 }
 

@@ -8,12 +8,12 @@ import com.example.outdoorsy.model.CommentModel
 import com.example.outdoorsy.model.PostModel
 import com.example.outdoorsy.model.UserModel
 
-@Database(entities = [UserModel::class, PostModel::class, CommentModel::class], version = 2, exportSchema = false)
+@Database(entities = [UserModel::class, PostModel::class, CommentModel::class], version = 5, exportSchema = false)
 abstract class AppLocalDb : RoomDatabase() {
 
     abstract fun userDao(): UserDao
     abstract fun postDao(): PostDao
-    abstract fun commentDao(): CommentDao  // ✅ Add CommentDao
+    abstract fun commentDao(): CommentDao
 
     companion object {
         @Volatile

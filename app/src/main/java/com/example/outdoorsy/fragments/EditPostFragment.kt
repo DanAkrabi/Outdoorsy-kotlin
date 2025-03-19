@@ -7,13 +7,14 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.outdoorsy.R
 import com.example.outdoorsy.databinding.FragmentEditPostBinding
 import com.example.outdoorsy.viewmodel.EditPostViewModel
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -92,13 +93,33 @@ class EditPostFragment : Fragment() {
         }
 
     }
-    private fun saveUpdatedPost() {
-        val newTextContent = binding.editTextPostContent.text.toString()
-        val newImageUrl = viewModel.imageUrl.value ?: ""
+//    private fun saveUpdatedPost() {
+//        val newTextContent = binding.editTextPostContent.text.toString()
+//        val newImageUrl = viewModel.imageUrl.value ?: ""
+//
+//
+//        viewModel.updatePost(postId, newTextContent, newImageUrl,oldImageUrl)
+//
+//    }
+private fun saveUpdatedPost() {
+    val newTextContent = binding.editTextPostContent.text.toString()
+    val newImageUrl = viewModel.imageUrl.value ?: ""
 
+//    val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
-        viewModel.updatePost(postId, newTextContent, newImageUrl,oldImageUrl)
+    viewModel.updatePost(
+        postId, newTextContent, newImageUrl, oldImageUrl,
+        param =navigateToUserProfile()
+    )
+//        navigateToUserProfile(currentUserId)
+
+}
+    private fun navigateToUserProfile() {
+//        val action = EditPostFragmentDirections.actionEditPostFragmentToUserProfileFragment(id!!)
+
+        findNavController().navigate(R.id.navigation_profile)
     }
+
     private fun openGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE)

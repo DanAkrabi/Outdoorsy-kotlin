@@ -14,7 +14,6 @@
             android:padding="16dp">
 
 
-
             <!-- Profile Image -->
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/profile_image"
@@ -63,6 +62,23 @@
                 app:iconTint="@android:color/white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/editProfileButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="12dp"
+                android:padding="12dp"
+                android:text="@string/edit_profile_button"
+                android:textAllCaps="false"
+                app:backgroundTint="@color/colorPrimaryContainer"
+                app:cornerRadius="16dp"
+                app:icon="@drawable/ic_edit"
+                app:iconGravity="textStart"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/logoutButton" />
 
             <TextView
                 android:id="@+id/profile_bio"

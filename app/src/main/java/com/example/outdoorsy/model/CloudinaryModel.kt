@@ -31,7 +31,7 @@ class CloudinaryModel @Inject constructor(@ApplicationContext private val contex
         bitmap: Bitmap,
         name: String,
         onSuccess: (String?) -> Unit,
-        onError: (String?) -> Unit
+        onError: (String) -> Unit
     ) {
         val file = bitmapToFile(bitmap, name)
         MediaManager.get().upload(file.path)

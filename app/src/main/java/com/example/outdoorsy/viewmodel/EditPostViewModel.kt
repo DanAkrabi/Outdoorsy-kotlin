@@ -45,7 +45,13 @@ class EditPostViewModel @Inject constructor(
     }
 
 
-    fun updatePost(postId: String, description: String, newImageUrl: String, oldImageUrl: String?) {
+    fun updatePost(
+        postId: String,
+        description: String,
+        newImageUrl: String,
+        oldImageUrl: String?,
+        param: Unit
+    ) {
         Log.d("EditPostViewModel", "newImageUrl: $newImageUrl")
         Log.d("EditPostViewModel", "oldImageUrl: $oldImageUrl")
 

@@ -38,11 +38,14 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun fetchUserPosts(userId: String) {
-        viewModelScope.launch {
-            _posts.postValue(postRepository.getUserPosts(userId))
-        }
+
+fun fetchUserPosts(userId: String) {
+    viewModelScope.launch {
+        val posts = postRepository.getUserPosts(userId)
+        val sortedPosts = posts.sortedByDescending { it.timestamp } // ✅ Sort newest first
+        _posts.postValue(sortedPosts) // ✅ Update LiveData with sorted posts
     }
+}
 
     fun fetchFollowersAndFollowingCounts(userId: String) {
         viewModelScope.launch {
