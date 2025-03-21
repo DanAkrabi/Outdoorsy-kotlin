@@ -11,7 +11,7 @@
         android:id="@+id/take_picture_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Capture Photo"
+        android:text="@string/capture_photo"
         app:icon="@drawable/ic_camera"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,7 +35,7 @@
             android:id="@+id/imageViewCaptured"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:contentDescription="Captured Photo"
+            android:contentDescription="@string/captured_photo"
             android:scaleType="centerCrop"
             tools:src="@drawable/ic_placeholder_image" />
     </com.google.android.material.card.MaterialCardView>
@@ -55,7 +55,7 @@
             android:id="@+id/editTextDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Add a description..." />
+            android:hint="@string/add_a_description" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Upload Button -->
@@ -63,7 +63,7 @@
         android:id="@+id/upload_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Upload Post"
+        android:text="@string/upload_post"
         app:layout_constraintTop_toBottomOf="@id/textInputLayoutDescription"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

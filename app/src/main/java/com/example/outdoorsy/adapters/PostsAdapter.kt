@@ -28,25 +28,21 @@ class PostsAdapter(
 
     inner class PostViewHolder(private val binding: ItemPostBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(post: PostModel) {
-            // Load post image using Glide
             Glide.with(context)
                 .load(post.imageUrl)
                 .placeholder(R.drawable.ic_placeholder_image)
                 .into(binding.imagePost)
 
-            // Set click listener
             binding.root.setOnClickListener { onPostClicked(post) }
         }
     }
 
     class PostDiffCallback : DiffUtil.ItemCallback<PostModel>() {
         override fun areItemsTheSame(oldItem: PostModel, newItem: PostModel): Boolean {
-            // Compare unique IDs
             return oldItem.postId == newItem.postId
         }
 
         override fun areContentsTheSame(oldItem: PostModel, newItem: PostModel): Boolean {
-            // Compare full content
             return oldItem == newItem
         }
     }

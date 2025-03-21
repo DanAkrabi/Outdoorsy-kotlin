@@ -19,7 +19,7 @@
             android:id="@+id/textUsername"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="User Name"
+            android:text="@string/user_name"
             android:textStyle="bold"
             android:textSize="14sp"
             android:layout_marginTop="4dp"/>
@@ -29,7 +29,7 @@
             android:id="@+id/textCommentContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="This is a comment content"
+            android:text="@string/this_is_a_comment_content"
             android:layout_marginTop="4dp"/>
 
         <!-- Timestamp -->
@@ -37,7 +37,7 @@
             android:id="@+id/textTimestamp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Timestamp"
+            android:text="@string/timestamp"
             android:textSize="12sp"
             android:textColor="@android:color/darker_gray"
             android:layout_marginTop="4dp"/>

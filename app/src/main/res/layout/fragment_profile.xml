@@ -165,7 +165,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Followers"
+                            android:text="@string/followers"
                             android:textAppearance="?attr/textAppearanceLabelMedium"
                             android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
@@ -198,7 +198,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Following"
+                            android:text="@string/following"
                             android:textAppearance="?attr/textAppearanceLabelMedium"
                             android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>

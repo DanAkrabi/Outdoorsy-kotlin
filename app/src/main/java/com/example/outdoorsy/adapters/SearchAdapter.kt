@@ -35,7 +35,6 @@ class SearchAdapter(private val onUserClick: (UserModel) -> Unit) :
         holder.bind(userList[position])
     }
 
-//    override fun getItemCount(): Int = userList.size
 override fun getItemCount(): Int {
     Log.d("SearchAdapter", "getItemCount(): ${userList.size}")
     return userList.size
