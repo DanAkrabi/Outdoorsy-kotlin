@@ -26,7 +26,7 @@ import com.example.outdoorsy.viewmodel.UserViewModel
 import com.example.outdoorsy.viewmodel.PostViewModel
 import com.example.outdoorsy.viewmodel.WeatherViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.squareup.picasso.Callback
+
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import com.example.outdoorsy.BuildConfig
@@ -37,7 +37,6 @@ class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
 
-    private val userViewModel: UserViewModel by activityViewModels()
     private val profileViewModel: ProfileViewModel by viewModels()
     private val postViewModel: PostViewModel by viewModels()
     private val weatherViewModel: WeatherViewModel by viewModels()
@@ -67,7 +66,6 @@ class ProfileFragment : Fragment() {
                 postViewModel.clearAllRoomPosts()
                 FirebaseAuth.getInstance().signOut() // Sign out the user
 
-                // Navigate back to Login screen
                 val intent = Intent(requireContext(), MainActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
@@ -75,18 +73,16 @@ class ProfileFragment : Fragment() {
         }
 
         binding.editProfileButton.setOnClickListener {
-            // Ensure that the data is not null or provide defaults
             val fullname = profileViewModel.user.value?.fullname ?: "Default Name"
             val imageUrl = profileViewModel.user.value?.profileImg ?: ""
 
-            // Create the action with the required arguments
             val action = ProfileFragmentDirections.actionProfileFragmentToEditProfileFragment(fullname, imageUrl)
             findNavController().navigate(action)
         }
         binding.weatherButton.setOnClickListener {
-            val cityName = "Tel Aviv"  // Or get the city from SharedPreferences or a config
-            val apiKey = BuildConfig.weather_key  // Use your actual OpenWeather API key
-            weatherViewModel.getWeather(cityName, apiKey)  // Call the ViewModel to fetch weather
+            val cityName = "Tel Aviv"
+            val apiKey = BuildConfig.weather_key
+            weatherViewModel.getWeather(cityName, apiKey)
             findNavController().navigate(R.id.action_profileFragment_to_weatherFragment)
         }
 

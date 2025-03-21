@@ -78,19 +78,14 @@ class PostDetailsFragment : Fragment() {
     }
 
     private fun setupSwipeRefresh() {
-        // Initialize swipe refresh layout
         binding.swipeRefreshLayout.setOnRefreshListener {
-            // Show the loading indicator while refreshing
             binding.swipeRefreshLayout.isRefreshing = true
 
-            // Refresh the data
             postViewModel.fetchPostDetails(args.post.postId)
             commentsViewModel.fetchComments(args.post.postId) // Fetching the post comments
 
-            // Set up any other necessary listeners or data refresh logic
             setupInteractionListeners(args.post)
 
-            // Once the data is loaded, stop the refreshing animation
             binding.swipeRefreshLayout.isRefreshing = false
         }
     }
@@ -121,22 +116,20 @@ class PostDetailsFragment : Fragment() {
         }
         binding.recyclerViewComments.adapter = commentsAdapter
 
-        // ✅ Observe comments LiveData
         commentsViewModel.comments.observe(viewLifecycleOwner) { comments ->
-            Log.d("UI Debug", "🔥 Received ${comments.size} comments in Fragment")
+            Log.d("UI Debug", " Received ${comments.size} comments in Fragment")
 
             if (comments.isEmpty()) {
-                Log.e("UI Debug", "❌ No comments to display!")
+                Log.e("UI Debug", " No comments to display!")
                 return@observe
             }
 
             Log.d("UI Debug", "✅ Updating adapter with ${comments.size} comments")
-            commentsAdapter.updateComments(comments)  // ✅ Update adapter data
+            commentsAdapter.updateComments(comments)
             binding.recyclerViewComments.post {
-                binding.recyclerViewComments.invalidate()  // 🔥 Forces UI to re-measure
+                binding.recyclerViewComments.invalidate()
             }
 
-            // ✅ Debugging RecyclerView visibility
             if (binding.recyclerViewComments.visibility != View.VISIBLE) {
                 Log.e("UI Debug", "🚨 RecyclerView is HIDDEN! Making it visible...")
                 binding.recyclerViewComments.visibility = View.VISIBLE
@@ -178,13 +171,12 @@ class PostDetailsFragment : Fragment() {
             if (updatedPost != null) {
                 Log.d("PostDetailsFragment", "post.observe() - Updated post received: $updatedPost")
 
-                // Preserve the fullname if it's missing in the updated post
                 val preservedPost = updatedPost.copy(
                     fullname = if (updatedPost.fullname.isNotEmpty()) updatedPost.fullname else binding.textUsername.text.toString()
                 )
 
                 binding.post = preservedPost
-                binding.executePendingBindings() // Ensure UI updates
+                binding.executePendingBindings()
 
                 binding.commentsCount.text = "${preservedPost.commentsCount} Comments"
                 binding.likesCount.text = "${preservedPost.likesCount} Likes"
@@ -204,9 +196,7 @@ class PostDetailsFragment : Fragment() {
     }
 
     private fun setupInteractionListeners(post: PostModel) {
-//        binding.buttonEditPost.setOnClickListener {
-//            enableEditing(true)  // Enable text editing
-//        }
+
 
         binding.buttonEditPost.setOnClickListener {
             navigateToEditPost(post)
@@ -214,11 +204,11 @@ class PostDetailsFragment : Fragment() {
         binding.buttonDeletePost.setOnClickListener {
             postViewModel.deletePost(post.postId)
             Toast.makeText(requireContext(), "Post deleted", Toast.LENGTH_SHORT).show()
-            findNavController().popBackStack() // Navigate back after deletion
+            findNavController().popBackStack()
         }
 
 
-        binding.buttonPostComment?.setOnClickListener {  // ✅ FIX: Ensure button is found
+        binding.buttonPostComment?.setOnClickListener {
             val content = binding.editTextComment?.text?.toString()?.trim()
             if (!content.isNullOrEmpty()) {
                 val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return@setOnClickListener

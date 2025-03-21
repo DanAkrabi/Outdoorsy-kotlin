@@ -52,15 +52,7 @@ class RegisterViewModel @Inject constructor(
                 val authResult = firebaseModel.registerUser(email,password,fullname)
 
 
-                // Save additional user information to Firestore
-//                val userId = authResult.user?.uid ?: UUID.randomUUID().toString()
-//                val user = UserModel(
-//                    id = userId,
-//                    email = email,
-//                    fullname = fullname,
-//                    password = password // Don't save plain-text passwords in production apps
-//                )
-//                firebaseModel.saveUser(user)
+
 
                 _registrationState.value = RegistrationState.Success
             } catch (e: Exception) {

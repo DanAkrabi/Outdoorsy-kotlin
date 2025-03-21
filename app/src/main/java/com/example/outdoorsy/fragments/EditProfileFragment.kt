@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.outdoorsy.databinding.FragmentEditProfileBinding
 import com.example.outdoorsy.viewmodel.EditProfileViewModel
@@ -25,7 +26,7 @@ class EditProfileFragment : Fragment() {
     private var _binding: FragmentEditProfileBinding? = null
     private val binding get() = _binding!!
     private val viewModel: EditProfileViewModel by viewModels()
-    private var oldProfileUrl: String? = null
+    private val args: EditProfileFragmentArgs by navArgs()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -35,8 +36,9 @@ class EditProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val fullname = arguments?.getString("fullname") ?: "Default Name"
-        val imageUrl = arguments?.getString("imageUrl") ?: "Default Image URL"
+        val fullname = args.fullname
+        val imageUrl = args.imageUrl
+
         // Use the data to populate your views or for other logic
         binding.fullNameEditText.setText(fullname)
         Glide.with(this).load(imageUrl).into(binding.profileImageView)

@@ -28,7 +28,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class CameraFragment : Fragment() {
 
-    private lateinit var imageUri: Uri
+
     private lateinit var imageView: ImageView
     private lateinit var takePictureLauncher: ActivityResultLauncher<Uri>
     private val cameraViewModel: CameraViewModel by viewModels()

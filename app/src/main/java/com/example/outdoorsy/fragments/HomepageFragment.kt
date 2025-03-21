@@ -50,7 +50,6 @@ class HomepageFragment : Fragment(R.layout.fragment_homepage) {
             onPostClicked = { post -> navigateToPostDetails(post) },
             onUserProfileClick = { userId -> navigateToUserProfile(userId) }
         )
-        // Initialize PostsAdapter with the click listener
         postsAdapter = PostsAdapter(requireContext()) { post ->
             navigateToPostDetails(post)
         }
@@ -58,7 +57,7 @@ class HomepageFragment : Fragment(R.layout.fragment_homepage) {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = feedPostsAdapter
         }
-        viewModel.fetchHomepagePosts() // ✅ Fetch posts before observing
+        viewModel.fetchHomepagePosts()
 
         viewModel.feedPosts.observe(viewLifecycleOwner) { posts ->  // ✅ Observe _posts, not posts
             binding.progressBar.visibility = View.GONE
@@ -70,12 +69,9 @@ class HomepageFragment : Fragment(R.layout.fragment_homepage) {
                 Log.e("HomepageFragment", "Error loading posts: No posts found")
             }
         }
-        // Handle swipe-to-refresh
         binding.swipeRefreshLayout.setOnRefreshListener {
-            // Refresh the posts when swiped down
             viewModel.fetchHomepagePosts()
 
-            // Stop the refreshing indicator once the data is loaded
             binding.swipeRefreshLayout.isRefreshing = false
         }
 

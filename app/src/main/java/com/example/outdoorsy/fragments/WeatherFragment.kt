@@ -34,18 +34,14 @@ class WeatherFragment : Fragment() {
         val cityName = "Tel Aviv"  // Use your desired city
         val apiKey = BuildConfig.weather_key  // Your actual API key
 
-        // Fetch weather data initially when the fragment is created
         weatherViewModel.getWeather(cityName, apiKey)
 
-        // Observe the weather data
         weatherViewModel.weather.observe(viewLifecycleOwner, Observer { weather ->
             weather?.let {
-                // Update the UI with weather information
                 val temperatureInCelsius = it.main.temp - 273.15
                 binding.textViewTemperature.text = "Temperature: ${String.format("%.2f", temperatureInCelsius)}°C"
                 binding.textViewDescription.text = "Description: ${it.weather[0].description}"
 
-                // Update weather icon
                 val iconCode = it.weather[0].icon
                 val iconUrl = "https://openweathermap.org/img/wn/$iconCode@2x.png"
                 Glide.with(this)
@@ -56,9 +52,7 @@ class WeatherFragment : Fragment() {
             }
         })
 
-        // Set up the Refresh Weather button to fetch new weather data
         binding.refreshWeatherButton.setOnClickListener {
-            // Fetch weather data again on button click
             weatherViewModel.getWeather(cityName, apiKey)
         }
     }

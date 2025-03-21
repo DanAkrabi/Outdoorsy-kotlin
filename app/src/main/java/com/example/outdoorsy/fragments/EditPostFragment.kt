@@ -83,9 +83,7 @@ class EditPostFragment : Fragment() {
             Glide.with(this).load(url).into(binding.imageViewPost)
         }
 
-//        viewModel.postText.observe(viewLifecycleOwner) { text ->
-//            binding.editTextPostContent.setText(text)
-//        }
+
         viewModel.postText.observe(viewLifecycleOwner) { text ->
             if (binding.editTextPostContent.text.toString() != text) {
                 binding.editTextPostContent.setText(text)
@@ -93,29 +91,19 @@ class EditPostFragment : Fragment() {
         }
 
     }
-//    private fun saveUpdatedPost() {
-//        val newTextContent = binding.editTextPostContent.text.toString()
-//        val newImageUrl = viewModel.imageUrl.value ?: ""
-//
-//
-//        viewModel.updatePost(postId, newTextContent, newImageUrl,oldImageUrl)
-//
-//    }
+
 private fun saveUpdatedPost() {
     val newTextContent = binding.editTextPostContent.text.toString()
     val newImageUrl = viewModel.imageUrl.value ?: ""
 
-//    val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
     viewModel.updatePost(
         postId, newTextContent, newImageUrl, oldImageUrl,
         param =navigateToUserProfile()
     )
-//        navigateToUserProfile(currentUserId)
 
 }
     private fun navigateToUserProfile() {
-//        val action = EditPostFragmentDirections.actionEditPostFragmentToUserProfileFragment(id!!)
 
         findNavController().navigate(R.id.navigation_profile)
     }

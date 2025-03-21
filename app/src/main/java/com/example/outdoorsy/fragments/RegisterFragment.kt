@@ -35,17 +35,19 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         viewModel.registrationState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is RegisterViewModel.RegistrationState.Success -> {
+                    binding.loader.visibility = View.GONE
                     Toast.makeText(context, "Registration Successful!", Toast.LENGTH_SHORT).show()
                     findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
                 }
                 is RegisterViewModel.RegistrationState.Error -> {
+                    binding.loader.visibility = View.GONE
                     Toast.makeText(context, state.message, Toast.LENGTH_LONG).show()
                 }
                 RegisterViewModel.RegistrationState.Loading -> {
-                    // Show a loading spinner (optional)
+                    binding.loader.visibility = View.VISIBLE
                 }
                 RegisterViewModel.RegistrationState.Empty -> {
-                    // Do nothing
+                    binding.loader.visibility = View.GONE
                 }
             }
         }

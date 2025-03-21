@@ -30,7 +30,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentLoginBinding.bind(view)
 
-        // Navigate to RegisterFragment when Register button is clicked
         binding.register.setOnClickListener {
             findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
         }
@@ -47,7 +46,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             }
         }
 
-        // Observe the login state
         viewModel.loginState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is LoginViewModel.LoginState.Success -> {
